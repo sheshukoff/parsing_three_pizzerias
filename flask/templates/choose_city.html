@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for ('static', filename='choose_city.css')}}">
+</head>
+<body>
+    <div id="form_choose_city">
+        <h2 class="active"> Выберите города </h2>
+    </div>
+    <div id="table_choose_city">
+        <table>
+            <tr>
+                <th class="header">город</th>
+                <th class="header">твой выбор</th>
+            </tr>
+            {% for city in content['cities'] %}
+            <tr>
+                <td class="first_column"> {{ city }}</td>
+                <td class="second_column">
+                    <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider round"></span>
+                    </label>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div id="form_button_exit_parsing">
+        <input type="submit" class="button-exit" value="Шаг назад">
+    </div>
+    <div id="form_button_start_parsing">
+        <input type="submit" class="button-submit" value="Начать парсинг">
+    </div>
+</body>
+</html>

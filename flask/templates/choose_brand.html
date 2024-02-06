@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>choose_brand</title>
+    <link rel="stylesheet" type="text/css" href="static/choose_brand.css">
+</head>
+<body>
+    {% if current_user.is_authenticated %}
+    <h5>Вы авторизованы - {{ content['login'] }}</h5>
+    {% else %}
+        <p>Вы не авторизованы</p>
+    {% endif %}
+    <form action = "http://localhost:5000/choose_brand/choose_city" method = "post">
+        <div id="form_choose_brand">
+            <h2 class="active"> Выберите бренд </h2>
+        </div>
+        <div id="form_images_and_button">
+            <!-- Conteiner images and button -->
+            <div class="container-images-and-button-brand">
+                <picture class="My_pitures">
+                    <img src="https://papik.pro/grafic/uploads/posts/2023-04/1681549841_papik-pro-p-dodo-logotip-vektor-8.png" class="images_dodo">
+                </picture>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div class="container-images-and-button-brand">
+                <picture class="My_pitures">
+                    <img src="https://togliatti.atrium-parkhouse.ru/wp-content/uploads/2022/12/tashir-pizza-logo.png" class="images_tashir">
+                </picture>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div class="container-images-and-button-brand">
+                <picture class="My_pitures">
+                    <img src="https://irecommend.ru/sites/default/files/imagecache/copyright1/user-images/652309/PibKXGqqM85eCZ7n4fLMmA.jpg" class="images_tomato">
+                </picture>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
+        <div id="form_button_choose_city">
+             <input type="submit" class="button-submit" value="Выбрать города">
+        </div>
+    </form>
+</body>
+</html>

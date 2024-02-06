@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+<!--    <link rel="stylesheet" type="text/css" href="{{ url_for ('static', filename='choose_city.css')}}">-->
+</head>
+<body>
+    <div id="form_choose_city">
+        <h2 class="active"> Выберите города </h2>
+    </div>
+    <div id="table_choose_city">
+        <table>
+            <tr>
+                <th class="header">город</th>
+                <th class="header">твой выбор</th>
+            </tr>
+            {% for city in cities %}
+            <tr>
+                <td>{{ city }}</td>
+                <td>кнопка</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div id="form_button_choose_city">
+        {% if checkbox == 1 %}
+            <input type="checkbox" class="button-submit" value="Выбрать город">
+            <label for="scales">Выбрать город</label>
+        {% elif checkbox == 2 %}
+            <input type="checkbox" class="button-submit" value="Выбрать район">
+            <label for="scales">Выбрать район</label>
+        {% elif checkbox == 3 %}
+            <input type="checkbox" class="button-submit" value="Выбрать жилой комплекс">
+            <label for="scales">Выбрать жилой комплекс</label>
+        {% else %}
+            <p>Начни выбор заново</p>
+        {% endif %}
+    </div>
+    <form method="POST">
+        <input type="password" name="password" placeholder="Enter password" required>
+        </br>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
+
