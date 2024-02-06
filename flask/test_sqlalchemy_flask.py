@@ -1,7 +1,7 @@
 from dotenv import dotenv_values
 from sqlalchemy import create_engine, text
 
-config = dotenv_values(".env")
+config = dotenv_values("..\.env")
 
 USERNAME = config.get('USERNAME')
 PASSWORD = config.get('PASSWORD')

@@ -17,7 +17,7 @@ class Authorized_users(UserMixin, Base):
 
 
 
-config = dotenv_values(".env")
+config = dotenv_values("..\.env")
 
 USERNAME = config.get('USERNAME')
 PASSWORD = config.get('PASSWORD')
