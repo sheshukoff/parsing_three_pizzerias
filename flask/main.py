@@ -4,9 +4,8 @@ from flask_bcrypt import Bcrypt
 
 from test_sqlalchemy_flask import recieve_cities
 from load_in_authorized_users import load_table_authorized_users
-from create_table import session, engine, Authorized_users
+from create_table import session, Authorized_users
 from write_query_sql import search_password, recieve_user_login
-
 
 app = Flask(__name__)
 app.secret_key = 'some secret petelka_458'
@@ -46,8 +45,8 @@ def sign_in():
         if not input_login or not input_password:
             flash('Пожалуйста, заполните все поля')
         else:
-            login_user_db = recieve_user_login(input_login) # логин пользователя из БД
-            hash_password_user_db = search_password(input_login) # хешированный пароль пользоватея из БД
+            login_user_db = recieve_user_login(input_login)  # логин пользователя из БД
+            hash_password_user_db = search_password(input_login)  # хешированный пароль пользоватея из БД
             if login_user_db is None or hash_password_user_db is None:
                 flash('Логин или пароль не правильный')
                 return redirect(url_for('sign_in'))
@@ -138,12 +137,11 @@ app.add_url_rule("/choose_brand/choose_city", 'choose_city', choose_city, method
 
 app.add_url_rule("/sign_in", 'sign_in', sign_in, methods=['GET', 'POST'])
 app.add_url_rule("/sign_up", 'sign_up', sign_up, methods=['GET', 'POST'])
-app.add_url_rule("/" 'log_out' ,log_out, methods=['GET', 'POST'])
+app.add_url_rule("/" 'log_out', log_out, methods=['GET', 'POST'])
 
 
 if __name__ == '__main__':
     app.run(debug=True)
-
 
 # проверить как сейчас работает парсинг
 # перенести функции относящиеся к классу юзер и переписать код
@@ -169,7 +167,3 @@ if __name__ == '__main__':
 #         # cities = recieve_cities()
 #         # print(cities)
 #     return render_template('test_choose_city.html')
-
-
-
-
