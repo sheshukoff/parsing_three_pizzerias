@@ -13,6 +13,7 @@ engine = create_engine(
     f'postgresql://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}'
 )
 
+
 def recieve_cities():
 
     connection = engine.connect()
@@ -37,23 +38,3 @@ def recieve_cities():
 
 if __name__ == '__main__':
     recieve_cities()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Создаём таблицы
-# Base.metadata.create_all(engine)
-
-# Создаём сессию для работы с базой данных
-# Session = sessionmaker(bind=engine)
-# session = Session()
