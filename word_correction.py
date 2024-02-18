@@ -1,5 +1,5 @@
-from parser import find_url_cities
-import nltk
+# from parser import find_url_cities
+# import nltk
 
 
 def input_cities() -> list:
