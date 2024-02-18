@@ -1,22 +1,22 @@
 from bs4 import BeautifulSoup
 
 
-def find_url_cities() -> dict:
+def find_url_cities_tomato() -> dict:
     """
-    Функция на возращает all_url_cities. Пример -> ('Воронеж': '/voronezh').
+    Функция на возращает all_url_cities. Пример -> ('Воронеж': 'voronezh').
     return: dict
     """
 
-    URL = 'URLS.html'
+    URL = 'URLS_tomato.html'
 
     all_url_cities = {}
 
     soup = get_page_soup_from_file(URL)
-    table_cities = soup.find("div", {"class": "locality-selector-popup__table"})
+    table_cities = soup.find("div", {"class": "tab-pane fade active show"})
     all_tags_a = table_cities.find_all("a")
 
     for city in all_tags_a:
-        all_url_cities[city.text.strip()] = city['href']
+        all_url_cities[city.text.strip()] = city['data-url']
 
     return all_url_cities
 
@@ -30,14 +30,14 @@ def get_name(div: BeautifulSoup) -> str:
     return div.text.strip()
 
 
-def get_description(main: BeautifulSoup) -> str | None:
+def get_description(div: BeautifulSoup) -> str | None:
     """
     Функция возвращает описание продукта
     param main: BeautifulSoup
     return str | None
     """
 
-    description = main.text.strip()
+    description = div.text.strip()
 
     if description == '':
         return None
@@ -77,27 +77,21 @@ def get_product_data(product_card: BeautifulSoup) -> dict:
     new_price = None
     old_price = None
 
-    article = product_card
+    tag_picture = product_card.picture.decompose()
 
-    main = article.main
-    main.picture.decompose()  # удаляю блок picture он не нужен # +
-    div = main.div.extract()  # удалил блок div и вернул его в качестве результата # +
+    div_name = product_card.find('div', {'class': 'product-name'})
+    name = get_name(div_name)
 
-    name = get_name(div)
-    description = get_description(main)
+    div_description = product_card.find('div', {'class': 'product-description'})
+    description = get_description(div_description)
 
-    footer = article.footer
-    div_price = footer.find("div", {"class": "product-control-price"})
-
-    if div_price.div is None:
-        new_price = get_price(div_price)
-    else:
-        new_price, old_price = get_new_and_old_prices(div_price)
+    div_small_price = product_card.find('div', {'class': 'product-item-price'})
+    price = get_price(div_small_price)
 
     description_card_product = {
         'name': name,
         'description': description,
-        'new_price': new_price,
+        'new_price': price,
         'old_price': old_price
     }
 
@@ -110,8 +104,24 @@ def get_products_cards_from_section(section: BeautifulSoup) -> BeautifulSoup:
     param section: BeautifulSoup
     return: BeautifulSoup
     """
-    cards_products = section.find_all("article")
+    cards_products = section.find_all("div", {'class': 'product-container'})
     return cards_products
+
+
+def processing_section_name(page_soup: BeautifulSoup) -> str:
+    """
+    Функция обрабатывает название секции (В пиццерии ТОМАТО секция 'Пицца в Воронеже: меню с ценами' -> 'Пиццаэ
+    :param page_soup: BeautifulSoup
+    :return: str
+    """
+
+    title_section = page_soup.find('div', {'class': 'content-container'})
+
+    element_name_section = title_section.h1.text.strip()
+
+    search_section = element_name_section.split(' ')
+    name = search_section[0]
+    return name
 
 
 def get_sections_from_page(page_soup: BeautifulSoup) -> BeautifulSoup:
@@ -120,7 +130,7 @@ def get_sections_from_page(page_soup: BeautifulSoup) -> BeautifulSoup:
     param page_soup: BeautifulSoup
     return: BeautifulSoup
     """
-    sections = page_soup.main.find_all("section")
+    sections = page_soup.find_all("div", {'class': 'row is-flex'})
     return sections
 
 
@@ -138,35 +148,28 @@ def get_page_soup_from_file(file_name: str) -> BeautifulSoup:
     return soup
 
 
-def get_data_from_locality(file_name: str) -> dict[list[dict]]:
+def get_data_from_locality_tomato(file_name: str) -> dict[list[dict]]:
     """
     Функция парсит данные со страницы населенного пункта или города.
     :param file_name: str
     :return: dict[list[dict]]
     """
     result = {}
-
     page_soup = get_page_soup_from_file(file_name)  # получение html страницы
+
     sections_page = get_sections_from_page(page_soup)
 
     for section in sections_page:
+        name_section = processing_section_name(page_soup)
         temp = []
-        if 'id' in section.attrs.keys():
-            name_sections = section.h2.text.strip()
-            cards_products = get_products_cards_from_section(section)
-            for product_card in cards_products:
-                definition_product = get_product_data(product_card)
-                temp.append(definition_product)
+        cards_products = get_products_cards_from_section(section)
+        for product_card in cards_products:
+            definition_product = get_product_data(product_card)
+            temp.append(definition_product)
 
-            result[name_sections] = temp
+        result[name_section] = temp
+
+    print(result)
 
     return result
 
-
-# TODO Вынести в функцию пользоватся когда парсить с телефона
-# chrome_options.add_argument("user-agent=Mozilla/5.0"
-#                             " (iPhone; CPU iPhone OS 14_6 like Mac OS X)"
-#                             " AppleWebKit/605.1.15 (KHTML, like Gecko) "
-#                             "Version/14.0.3 Mobile/15E148 Safari/604.1") # парсинг со смартфона
-# driver = webdriver.Chrome(options=chrome_options) # веб драйвер
-#  {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 24, 25, 26, 27, 28, 29, 31, 32} длинна слова
