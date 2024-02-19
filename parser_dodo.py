@@ -110,9 +110,7 @@ def get_page_soup_from_file(file_name: str) -> BeautifulSoup:
     param file_name: str
     return: BeautifulSoup
     """
-    with open(
-        file_name, "r", encoding="utf-8"
-    ) as file:  # правильное открытие файла в формате html
+    with open(file_name, "r", encoding="utf-8") as file:
         file_html = file.read()
 
     soup = BeautifulSoup(file_html, "html.parser")

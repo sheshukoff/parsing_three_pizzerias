@@ -61,9 +61,7 @@ def write_file_from_soup(soup: BeautifulSoup, name_city: str):
     """
     path_dodo = "Додо пицца"
 
-    with open(
-        f"{path_dodo}/{name_city}.html", "w", encoding="utf-8"
-    ) as file:  # делаем файл в html, чтобы дергать сайт лишний раз
+    with open(f"{path_dodo}/{name_city}.html", "w", encoding="utf-8") as file:
         file.write(str(soup))
 
 
