@@ -1,6 +1,7 @@
 import selenium
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+
 # from webdriver_manager.chrome import ChromeDriverManager
 
 import os
@@ -11,6 +12,7 @@ from bs4 import BeautifulSoup
 from parser_dodo import find_url_cities_dodo, get_data_from_locality_dodo
 
 from word_correction import get_correct_city
+
 # from load_in_postgresql import load_database_description_product_card, load_table_brand, \
 #     load_table_city, load_table_section
 
@@ -23,8 +25,8 @@ def get_page_soup_from_url(city_url: str) -> BeautifulSoup:
     """
 
     chrome_options = Options()
-    chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
 
     driver = webdriver.Chrome()
     # driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options)
@@ -37,7 +39,7 @@ def get_page_soup_from_url(city_url: str) -> BeautifulSoup:
         exit(1)
     time.sleep(5)
 
-    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    soup = BeautifulSoup(driver.page_source, "html.parser")
     return soup
 
 
@@ -57,9 +59,11 @@ def write_file_from_soup(soup: BeautifulSoup, name_city: str):
     param soup: BeautifulSoup
     name_city: str
     """
-    path_dodo = 'Додо пицца'
+    path_dodo = "Додо пицца"
 
-    with open(f"{path_dodo}/{name_city}.html", "w", encoding='utf-8') as file:  # делаем файл в html, чтобы дергать сайт лишний раз
+    with open(
+        f"{path_dodo}/{name_city}.html", "w", encoding="utf-8"
+    ) as file:  # делаем файл в html, чтобы дергать сайт лишний раз
         file.write(str(soup))
 
 
@@ -68,13 +72,15 @@ def create_file_html(city: str) -> str:
     Функция создает html файлы для дальнейшей работы (что бы не дергать сайт)
     param list_cities: list
     """
-    path_dodo = 'Додо пицца'
-    all_url_cities = find_url_cities_dodo()  # получение всех возможных городов для парсинга
+    path_dodo = "Додо пицца"
+    all_url_cities = (
+        find_url_cities_dodo()
+    )  # получение всех возможных городов для парсинга
 
     url_city = all_url_cities[city]
     soup_city = get_page_soup_from_url(url_city)
     write_file_from_soup(soup_city, city)
-    file_name = f'{path_dodo}/{city}.html' # Переделать так как город уже есть
+    file_name = f"{path_dodo}/{city}.html"  # Переделать так как город уже есть
 
     return file_name
 
@@ -83,7 +89,7 @@ def parsing_dodo_pizza():
     """
     Функция загружает данные по Бренду, городам и продуктам в базу данных
     """
-    brand = 'Додо пицца'
+    brand = "Додо пицца"
     check_path(brand)  # проверяет существует ли папка "Додо пицца"
     os.mkdir(brand)  # Создается папка "Додо пицца"
     # load_table_brand(brand)

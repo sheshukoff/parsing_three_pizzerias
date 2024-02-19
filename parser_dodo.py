@@ -19,7 +19,7 @@ def get_description(main: BeautifulSoup) -> str | None:
 
     description = main.text.strip()
 
-    if description == '':
+    if description == "":
         return None
 
     return description
@@ -75,10 +75,10 @@ def get_product_data(product_card: BeautifulSoup) -> dict:
         new_price, old_price = get_new_and_old_prices(div_price)
 
     description_card_product = {
-        'name': name,
-        'description': description,
-        'new_price': new_price,
-        'old_price': old_price
+        "name": name,
+        "description": description,
+        "new_price": new_price,
+        "old_price": old_price,
     }
 
     return description_card_product
@@ -110,10 +110,12 @@ def get_page_soup_from_file(file_name: str) -> BeautifulSoup:
     param file_name: str
     return: BeautifulSoup
     """
-    with open(file_name, "r", encoding='utf-8') as file:  # правильное открытие файла в формате html
+    with open(
+        file_name, "r", encoding="utf-8"
+    ) as file:  # правильное открытие файла в формате html
         file_html = file.read()
 
-    soup = BeautifulSoup(file_html, 'html.parser')
+    soup = BeautifulSoup(file_html, "html.parser")
 
     return soup
 
@@ -131,7 +133,7 @@ def get_data_from_locality_dodo(file_name: str) -> dict[list[dict]]:
 
     for section in sections_page:
         temp = []
-        if 'id' in section.attrs.keys():
+        if "id" in section.attrs.keys():
             name_sections = section.h2.text.strip()
             cards_products = get_products_cards_from_section(section)
             for product_card in cards_products:

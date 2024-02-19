@@ -12,7 +12,7 @@ def input_cities() -> list:
 
     while True:
         write_city = input("Напишите город. Остановить ввод нажмите Enter:  ")
-        if write_city == '':
+        if write_city == "":
             break
         else:
             list_cities.append(write_city)
@@ -104,7 +104,7 @@ def choosing_from_proposed_cities(presumably_cities: list) -> list:
 
     for city in presumably_cities:
         for number, find_city in city.items():
-            print(f'{find_city} -> {number}')
+            print(f"{find_city} -> {number}")
         print()
         print("Не правильно написан город.")
         print("Какой город вы имели ввиду?")
@@ -125,8 +125,16 @@ def get_correct_city() -> list:
     """
     list_cities = input_cities()  # пользователь вводит города
     correct_city = correct_write_city(list_cities)  # получение корректных городов
-    incorrect_city = incorrect_write_city(list_cities)  # получение не корректных городов
-    presumably_cities = presumably_correct_cities(incorrect_city)  # возможные варианты городов
-    corrected_cities = choosing_from_proposed_cities(presumably_cities)  # пользователь выбыирает корректный город
-    all_correct_city = correct_city + corrected_cities  # получение городов, которые вписал пользователь
+    incorrect_city = incorrect_write_city(
+        list_cities
+    )  # получение не корректных городов
+    presumably_cities = presumably_correct_cities(
+        incorrect_city
+    )  # возможные варианты городов
+    corrected_cities = choosing_from_proposed_cities(
+        presumably_cities
+    )  # пользователь выбыирает корректный город
+    all_correct_city = (
+        correct_city + corrected_cities
+    )  # получение городов, которые вписал пользователь
     return all_correct_city

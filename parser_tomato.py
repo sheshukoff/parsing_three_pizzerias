@@ -7,7 +7,7 @@ def find_url_cities_tomato() -> dict:
     return: dict
     """
 
-    URL = 'URLS_tomato.html'
+    URL = "URLS_tomato.html"
 
     all_url_cities = {}
 
@@ -16,7 +16,7 @@ def find_url_cities_tomato() -> dict:
     all_tags_a = table_cities.find_all("a")
 
     for city in all_tags_a:
-        all_url_cities[city.text.strip()] = city['data-url']
+        all_url_cities[city.text.strip()] = city["data-url"]
 
     return all_url_cities
 
@@ -39,7 +39,7 @@ def get_description(div: BeautifulSoup) -> str | None:
 
     description = div.text.strip()
 
-    if description == '':
+    if description == "":
         return None
 
     return description
@@ -79,20 +79,20 @@ def get_product_data(product_card: BeautifulSoup) -> dict:
 
     tag_picture = product_card.picture.decompose()
 
-    div_name = product_card.find('div', {'class': 'product-name'})
+    div_name = product_card.find("div", {"class": "product-name"})
     name = get_name(div_name)
 
-    div_description = product_card.find('div', {'class': 'product-description'})
+    div_description = product_card.find("div", {"class": "product-description"})
     description = get_description(div_description)
 
-    div_small_price = product_card.find('div', {'class': 'product-item-price'})
+    div_small_price = product_card.find("div", {"class": "product-item-price"})
     price = get_price(div_small_price)
 
     description_card_product = {
-        'name': name,
-        'description': description,
-        'new_price': price,
-        'old_price': old_price
+        "name": name,
+        "description": description,
+        "new_price": price,
+        "old_price": old_price,
     }
 
     return description_card_product
@@ -104,7 +104,7 @@ def get_products_cards_from_section(section: BeautifulSoup) -> BeautifulSoup:
     param section: BeautifulSoup
     return: BeautifulSoup
     """
-    cards_products = section.find_all("div", {'class': 'product-container'})
+    cards_products = section.find_all("div", {"class": "product-container"})
     return cards_products
 
 
@@ -115,11 +115,11 @@ def processing_section_name(page_soup: BeautifulSoup) -> str:
     :return: str
     """
 
-    title_section = page_soup.find('div', {'class': 'content-container'})
+    title_section = page_soup.find("div", {"class": "content-container"})
 
     element_name_section = title_section.h1.text.strip()
 
-    search_section = element_name_section.split(' ')
+    search_section = element_name_section.split(" ")
     name = search_section[0]
     return name
 
@@ -130,7 +130,7 @@ def get_sections_from_page(page_soup: BeautifulSoup) -> BeautifulSoup:
     param page_soup: BeautifulSoup
     return: BeautifulSoup
     """
-    sections = page_soup.find_all("div", {'class': 'row is-flex'})
+    sections = page_soup.find_all("div", {"class": "row is-flex"})
     return sections
 
 
@@ -140,10 +140,12 @@ def get_page_soup_from_file(file_name: str) -> BeautifulSoup:
     param file_name: str
     return: BeautifulSoup
     """
-    with open(file_name, "r", encoding='utf-8') as file:  # правильное открытие файла в формате html
+    with open(
+        file_name, "r", encoding="utf-8"
+    ) as file:  # правильное открытие файла в формате html
         file_html = file.read()
 
-    soup = BeautifulSoup(file_html, 'html.parser')
+    soup = BeautifulSoup(file_html, "html.parser")
 
     return soup
 
@@ -172,4 +174,3 @@ def get_data_from_locality_tomato(file_name: str) -> dict[list[dict]]:
     print(result)
 
     return result
-

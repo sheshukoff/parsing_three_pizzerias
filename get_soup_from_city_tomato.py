@@ -1,6 +1,7 @@
 import selenium
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+
 # from webdriver_manager.chrome import ChromeDriverManager
 
 import os
@@ -20,18 +21,22 @@ def get_page_soup_from_url(city_url: str) -> dict[str, BeautifulSoup]:
     return: dict[str, BeautifulSoup]
     """
 
-    section_tomato = ['pizza', 'action', 'snacks', 'dessertdrink', 'drinks']
+    section_tomato = ["pizza", "action", "snacks", "dessertdrink", "drinks"]
 
     chrome_options = Options()  # после получение разметки можно не использовать
-    chrome_options.add_argument('--no-sandbox')  # после получение разметки можно не использовать
-    chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument(
+        "--no-sandbox"
+    )  # после получение разметки можно не использовать
+    chrome_options.add_argument("--disable-dev-shm-usage")
 
     # driver = webdriver.Chrome(options=chrome_options)  # после получение разметки можно не использовать
 
     roster_soups = {}
 
     for section in section_tomato:
-        driver = webdriver.Chrome(options=chrome_options)  # после получение разметки можно не использовать
+        driver = webdriver.Chrome(
+            options=chrome_options
+        )  # после получение разметки можно не использовать
         URL = f"https://www.tomato-pizza.ru/menu/{city_url}/{section}"
 
         try:
@@ -41,7 +46,7 @@ def get_page_soup_from_url(city_url: str) -> dict[str, BeautifulSoup]:
             exit(1)
         time.sleep(5)
 
-        soup = BeautifulSoup(driver.page_source, 'html.parser')
+        soup = BeautifulSoup(driver.page_source, "html.parser")
         driver.close()
         roster_soups[section] = soup
 
@@ -64,23 +69,27 @@ def write_file_from_soup(roster_soups: dict, name_city: str) -> list:
     param soup: BeautifulSoup
     name_city: str
     """
-    path_tomato = 'Томато'
+    path_tomato = "Томато"
 
     file_sections = []
-    os.makedirs(os.path.join(path_tomato, name_city)) # Создются папки с городами в нутри папки "Томато"
+    os.makedirs(
+        os.path.join(path_tomato, name_city)
+    )  # Создются папки с городами в нутри папки "Томато"
     time.sleep(3)
 
     for section, soup in roster_soups.items():
         time.sleep(3)
-        with open(f"{path_tomato}/{name_city}/{section}.html", "w", encoding='utf-8') as file:  # делаем файл в html, чтобы дергать сайт лишний раз
+        with open(
+            f"{path_tomato}/{name_city}/{section}.html", "w", encoding="utf-8"
+        ) as file:  # делаем файл в html, чтобы дергать сайт лишний раз
             file.write(str(soup))
-            file_sections.append(f'{path_tomato}/{name_city}/{section}.html')
+            file_sections.append(f"{path_tomato}/{name_city}/{section}.html")
 
     return file_sections
 
 
 def parsing_tomato_pizza():
-    path_tomato = 'Томато'
+    path_tomato = "Томато"
 
     all_url_cities = find_url_cities_tomato()
     all_correct_city = get_correct_city()

@@ -5,5 +5,5 @@ def main():
     parsing_dodo_pizza()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -9,27 +9,24 @@ class Base(DeclarativeBase):
 
 
 class Authorized_users(UserMixin, Base):
-    __tablename__ = 'authorized_users'
+    __tablename__ = "authorized_users"
 
     id = Column(Integer, primary_key=True)
     login = Column(String(20), nullable=False, unique=True)
     password = Column(String(60), nullable=False)
 
 
-
 config = dotenv_values("..\.env")
 
-USERNAME = config.get('USERNAME')
-PASSWORD = config.get('PASSWORD')
-HOST = config.get('HOST')
-PORT = config.get('PORT')
-DATABASE = config.get('DATABASE')
+USERNAME = config.get("USERNAME")
+PASSWORD = config.get("PASSWORD")
+HOST = config.get("HOST")
+PORT = config.get("PORT")
+DATABASE = config.get("DATABASE")
 
 
 # Создаем подключение к базе данных PostgreSQL
-engine = create_engine(
-    f'postgresql://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}'
-)
+engine = create_engine(f"postgresql://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}")
 
 # Создаём таблицы
 Base.metadata.create_all(engine)

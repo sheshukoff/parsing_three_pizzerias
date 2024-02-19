@@ -7,7 +7,7 @@ def find_url_cities_tashir() -> dict:
     return: dict
     """
 
-    URL = 'URLS_tashir.html'
+    URL = "URLS_tashir.html"
 
     all_url_cities = {}
 
@@ -16,7 +16,7 @@ def find_url_cities_tashir() -> dict:
     all_tags_a = table_cities.find_all("a")
 
     for city in all_tags_a:
-        all_url_cities[city.text.strip()] = city['href']
+        all_url_cities[city.text.strip()] = city["href"]
 
     return all_url_cities
 
@@ -40,7 +40,7 @@ def get_description(figure: BeautifulSoup) -> str | None:
 
     description = figure.find("span", {"class": "descr"}).text.strip()
 
-    if description == '':
+    if description == "":
         return None
 
     return description
@@ -86,10 +86,10 @@ def get_product_data(product_card: BeautifulSoup) -> dict:
     new_price = get_price(figure)
 
     description_card_product = {
-        'name': name,
-        'description': description,
-        'new_price': new_price,
-        'old_price': old_price
+        "name": name,
+        "description": description,
+        "new_price": new_price,
+        "old_price": old_price,
     }
 
     return description_card_product
@@ -133,10 +133,12 @@ def get_page_soup_from_file(file_name: str) -> BeautifulSoup:
     param file_name: str
     return: BeautifulSoup
     """
-    with open(file_name, "r", encoding='utf-8') as file:  # правильное открытие файла в формате html
+    with open(
+        file_name, "r", encoding="utf-8"
+    ) as file:  # правильное открытие файла в формате html
         file_html = file.read()
 
-    soup = BeautifulSoup(file_html, 'html.parser')
+    soup = BeautifulSoup(file_html, "html.parser")
 
     return soup
 
@@ -149,7 +151,7 @@ def get_data_from_locality_tashir(file_name: str) -> dict[list[dict]]:
     """
     result = {}
 
-    page_soup = get_page_soup_from_file(file_name) # получение html страницы
+    page_soup = get_page_soup_from_file(file_name)  # получение html страницы
     all_sections = get_sections_from_page(page_soup)
     all_name_section = get_name_catalog(page_soup)
 

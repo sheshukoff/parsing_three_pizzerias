@@ -9,11 +9,12 @@ def load_table_authorized_users(login: str, hash_password: str):
     """
 
     insert_authorized_users = [
-        {'login': login,
-        'password': hash_password},
+        {"login": login, "password": hash_password},
     ]
 
-    insert_value = session.scalars(insert(Authorized_users).returning(Authorized_users), insert_authorized_users)
+    insert_value = session.scalars(
+        insert(Authorized_users).returning(Authorized_users), insert_authorized_users
+    )
     result = insert_value.all()
 
     session.commit()
