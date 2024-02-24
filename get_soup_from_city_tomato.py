@@ -9,9 +9,8 @@ import shutil
 import time
 
 from bs4 import BeautifulSoup
-from parser_tomato import find_url_cities_tomato, get_data_from_locality_tomato
-
-from word_correction import get_correct_city
+from working_with_the_user import find_url_cities_tomato
+from parser_tomato import get_data_from_locality_tomato
 
 
 def get_page_soup_from_url(city_url: str) -> dict[str, BeautifulSoup]:
@@ -24,19 +23,13 @@ def get_page_soup_from_url(city_url: str) -> dict[str, BeautifulSoup]:
     section_tomato = ["pizza", "action", "snacks", "dessertdrink", "drinks"]
 
     chrome_options = Options()  # после получение разметки можно не использовать
-    chrome_options.add_argument(
-        "--no-sandbox"
-    )  # после получение разметки можно не использовать
+    chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
-
-    # driver = webdriver.Chrome(options=chrome_options)  # после получение разметки можно не использовать
 
     roster_soups = {}
 
     for section in section_tomato:
-        driver = webdriver.Chrome(
-            options=chrome_options
-        )  # после получение разметки можно не использовать
+        driver = webdriver.Chrome(options=chrome_options)
         URL = f"https://www.tomato-pizza.ru/menu/{city_url}/{section}"
 
         try:
@@ -72,32 +65,28 @@ def write_file_from_soup(roster_soups: dict, name_city: str) -> list:
     path_tomato = "Томато"
 
     file_sections = []
-    os.makedirs(
-        os.path.join(path_tomato, name_city)
-    )  # Создются папки с городами в нутри папки "Томато"
+    os.makedirs(os.path.join(path_tomato, name_city))
     time.sleep(3)
 
     for section, soup in roster_soups.items():
         time.sleep(3)
-        with open(
-            f"{path_tomato}/{name_city}/{section}.html", "w", encoding="utf-8"
-        ) as file:  # делаем файл в html, чтобы дергать сайт лишний раз
+        with open(f"{path_tomato}/{name_city}/{section}.html", "w", encoding="utf-8") as file:
             file.write(str(soup))
             file_sections.append(f"{path_tomato}/{name_city}/{section}.html")
 
     return file_sections
 
 
-def parsing_tomato_pizza():
+def parsing_tomato_pizza(tomato_cities):
     path_tomato = "Томато"
 
     all_url_cities = find_url_cities_tomato()
-    all_correct_city = get_correct_city()
+    # all_correct_city = get_correct_city()
 
     check_path(path_tomato)  # проверяет существует ли папка "Томато"
     os.mkdir(path_tomato)  # Создается папка "Томато"
 
-    for city in all_correct_city:
+    for city in tomato_cities:
         print(city)
         url_city = all_url_cities[city]
         soup_city = get_page_soup_from_url(url_city)

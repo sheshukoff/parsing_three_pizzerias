@@ -2,16 +2,14 @@ import selenium
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-# from webdriver_manager.chrome import ChromeDriverManager
 
 import os
 import shutil
 import time
 
 from bs4 import BeautifulSoup
-from parser_dodo import find_url_cities_dodo, get_data_from_locality_dodo
-
-from word_correction import get_correct_city
+from working_with_the_user import find_url_cities_dodo
+from parser_dodo import get_data_from_locality_dodo
 
 # from load_in_postgresql import load_database_description_product_card, load_table_brand, \
 #     load_table_city, load_table_section
@@ -40,6 +38,8 @@ def get_page_soup_from_url(city_url: str) -> BeautifulSoup:
     time.sleep(5)
 
     soup = BeautifulSoup(driver.page_source, "html.parser")
+    driver.close()
+
     return soup
 
 
@@ -71,9 +71,7 @@ def create_file_html(city: str) -> str:
     param list_cities: list
     """
     path_dodo = "Додо пицца"
-    all_url_cities = (
-        find_url_cities_dodo()
-    )  # получение всех возможных городов для парсинга
+    all_url_cities = find_url_cities_dodo()  # получение всех возможных городов для парсинга
 
     url_city = all_url_cities[city]
     soup_city = get_page_soup_from_url(url_city)
@@ -83,7 +81,7 @@ def create_file_html(city: str) -> str:
     return file_name
 
 
-def parsing_dodo_pizza():
+def parsing_dodo_pizza(dodo_cities: list):
     """
     Функция загружает данные по Бренду, городам и продуктам в базу данных
     """
@@ -92,13 +90,13 @@ def parsing_dodo_pizza():
     os.mkdir(brand)  # Создается папка "Додо пицца"
     # load_table_brand(brand)
 
-    all_correct_city = get_correct_city()
+    # all_correct_city = get_correct_city()
     brand_id = 1
     city_id = 1
 
     load_sections = False
 
-    for city in all_correct_city:
+    for city in dodo_cities:
         print(city)
         file_name = create_file_html(city)
 

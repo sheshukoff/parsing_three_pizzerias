@@ -1,26 +1,6 @@
 from bs4 import BeautifulSoup
 
 
-def find_url_cities_tomato() -> dict:
-    """
-    Функция на возращает all_url_cities. Пример -> ('Воронеж': 'voronezh').
-    return: dict
-    """
-
-    URL = "URLS_tomato.html"
-
-    all_url_cities = {}
-
-    soup = get_page_soup_from_file(URL)
-    table_cities = soup.find("div", {"class": "tab-pane fade active show"})
-    all_tags_a = table_cities.find_all("a")
-
-    for city in all_tags_a:
-        all_url_cities[city.text.strip()] = city["data-url"]
-
-    return all_url_cities
-
-
 def get_name(div: BeautifulSoup) -> str:
     """
     Функция возвращает название продукта
@@ -110,18 +90,14 @@ def get_products_cards_from_section(section: BeautifulSoup) -> BeautifulSoup:
 
 def processing_section_name(page_soup: BeautifulSoup) -> str:
     """
-    Функция обрабатывает название секции (В пиццерии ТОМАТО секция 'Пицца в Воронеже: меню с ценами' -> 'Пиццаэ
+    Функция обрабатывает название секции (В пиццерии ТОМАТО секция 'Пицца в Воронеже: меню с ценами' -> 'Пицца'
     :param page_soup: BeautifulSoup
     :return: str
     """
+    title_section = page_soup.find('li', {'class': 'nav-item active tab_selected'})
+    name_section = title_section.meta['content']
 
-    title_section = page_soup.find("div", {"class": "content-container"})
-
-    element_name_section = title_section.h1.text.strip()
-
-    search_section = element_name_section.split(" ")
-    name = search_section[0]
-    return name
+    return name_section
 
 
 def get_sections_from_page(page_soup: BeautifulSoup) -> BeautifulSoup:
@@ -140,9 +116,7 @@ def get_page_soup_from_file(file_name: str) -> BeautifulSoup:
     param file_name: str
     return: BeautifulSoup
     """
-    with open(
-        file_name, "r", encoding="utf-8"
-    ) as file:  # правильное открытие файла в формате html
+    with open(file_name, "r", encoding="utf-8") as file:
         file_html = file.read()
 
     soup = BeautifulSoup(file_html, "html.parser")
@@ -170,7 +144,5 @@ def get_data_from_locality_tomato(file_name: str) -> dict[list[dict]]:
             temp.append(definition_product)
 
         result[name_section] = temp
-
-    print(result)
 
     return result

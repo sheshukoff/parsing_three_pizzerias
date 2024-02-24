@@ -1,26 +1,6 @@
 from bs4 import BeautifulSoup
 
 
-def find_url_cities_tashir() -> dict:
-    """
-    Функция на возращает all_url_cities. Пример -> ('Воронеж': '/voronezh').
-    return: dict
-    """
-
-    URL = "URLS_tashir.html"
-
-    all_url_cities = {}
-
-    soup = get_page_soup_from_file(URL)
-    table_cities = soup.find("div", {"class": "cont"})
-    all_tags_a = table_cities.find_all("a")
-
-    for city in all_tags_a:
-        all_url_cities[city.text.strip()] = city["href"]
-
-    return all_url_cities
-
-
 def get_name(figure: BeautifulSoup) -> str:
     """
     Функция возвращает название продукта

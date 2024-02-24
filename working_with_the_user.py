@@ -79,7 +79,7 @@ def find_url_cities_tomato() -> dict:
                 continue
             else:
                 tag_a = cities.find("a", {"class": "text-underline"})["href"]
-                url_city = f"/{tag_a.split('/')[2]}"
+                url_city = f"{tag_a.split('/')[2]}"
                 name_city = city.text.strip()
 
                 all_url_cities[name_city] = url_city
@@ -132,9 +132,7 @@ def test_choose_city(brand: str, url_cities_brand: dict) -> dict:
         # print("Выберите бренд или введите 'готово', чтобы закончить:")
         for number, city in enumerate(list_cities, 1):
             print(f"{number} -- {city}")
-        print(
-            f'Выберите "номер" города для бренда {brand} или введите "готово", чтобы закончить ->'
-        )
+        print(f'Выберите "номер" города для бренда {brand} или введите "готово", чтобы закончить ->')
         choice = input()
 
         if choice.isdigit() and 1 <= int(choice) <= len(list_cities):
@@ -143,9 +141,7 @@ def test_choose_city(brand: str, url_cities_brand: dict) -> dict:
         elif choice.lower() == "готово":
             break
         else:
-            print("Некорректный ввод. Пожалуйста, выберите число от 1 до",
-                  len(list_cities),
-                  )
+            print("Некорректный ввод. Пожалуйста, выберите число от 1 до",len(list_cities),)
 
     roster[brand] = selected_cities
 
