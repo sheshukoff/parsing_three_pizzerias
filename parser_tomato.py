@@ -4,8 +4,8 @@ from bs4 import BeautifulSoup
 def get_name(div: BeautifulSoup) -> str:
     """
     Функция возвращает название продукта
-    param div: BeautifulSoup
-    return: str
+    :param div: BeautifulSoup
+    :return: str
     """
     return div.text.strip()
 
@@ -13,8 +13,8 @@ def get_name(div: BeautifulSoup) -> str:
 def get_description(div: BeautifulSoup) -> str | None:
     """
     Функция возвращает описание продукта
-    param main: BeautifulSoup
-    return str | None
+    :param div: BeautifulSoup
+    :return: str | None
     """
 
     description = div.text.strip()
@@ -28,8 +28,8 @@ def get_description(div: BeautifulSoup) -> str | None:
 def get_price(div: BeautifulSoup) -> str:
     """
     Функция возращает цену.
-    param div: BeautifulSoup
-    return: str
+    :param div: BeautifulSoup
+    :return: str
     """
     return div.text.strip()
 
@@ -37,8 +37,8 @@ def get_price(div: BeautifulSoup) -> str:
 def get_new_and_old_prices(div: BeautifulSoup) -> tuple:
     """
     Функция возращает новую и страрую цену.
-    param div: BeautifulSoup
-    return tuple
+    :param div: BeautifulSoup
+    :return tuple
     """
     get_old_price = div.div.extract()
     old_price = get_old_price.text.strip()
@@ -50,8 +50,8 @@ def get_new_and_old_prices(div: BeautifulSoup) -> tuple:
 def get_product_data(product_card: BeautifulSoup) -> dict:
     """
     Функция возращает все поля из карточки продукта
-    param product_card: BeautifulSoup
-    return: dict
+    :param product_card: BeautifulSoup
+    :return: dict
     """
 
     new_price = None
@@ -81,8 +81,8 @@ def get_product_data(product_card: BeautifulSoup) -> dict:
 def get_products_cards_from_section(section: BeautifulSoup) -> BeautifulSoup:
     """
     Функция возращает товары из секции
-    param section: BeautifulSoup
-    return: BeautifulSoup
+    :param section: BeautifulSoup
+    :return: BeautifulSoup
     """
     cards_products = section.find_all("div", {"class": "product-container"})
     return cards_products
@@ -94,7 +94,8 @@ def processing_section_name(page_soup: BeautifulSoup) -> str:
     :param page_soup: BeautifulSoup
     :return: str
     """
-    title_section = page_soup.find('li', {'class': 'nav-item active tab_selected'})
+
+    title_section = page_soup.find(class_=lambda x: x and 'nav-item active tab_selected' in x)
     name_section = title_section.meta['content']
 
     return name_section
@@ -103,8 +104,8 @@ def processing_section_name(page_soup: BeautifulSoup) -> str:
 def get_sections_from_page(page_soup: BeautifulSoup) -> BeautifulSoup:
     """
     Функция возращает список секций
-    param page_soup: BeautifulSoup
-    return: BeautifulSoup
+    :param page_soup: BeautifulSoup
+    :return: BeautifulSoup
     """
     sections = page_soup.find_all("div", {"class": "row is-flex"})
     return sections
@@ -113,8 +114,8 @@ def get_sections_from_page(page_soup: BeautifulSoup) -> BeautifulSoup:
 def get_page_soup_from_file(file_name: str) -> BeautifulSoup:
     """
     Функция возращает html разметку из файла
-    param file_name: str
-    return: BeautifulSoup
+    :param file_name: str
+    :return: BeautifulSoup
     """
     with open(file_name, "r", encoding="utf-8") as file:
         file_html = file.read()
@@ -131,8 +132,7 @@ def get_data_from_locality_tomato(file_name: str) -> dict[list[dict]]:
     :return: dict[list[dict]]
     """
     result = {}
-    page_soup = get_page_soup_from_file(file_name)  # получение html страницы
-
+    page_soup = get_page_soup_from_file(file_name)
     sections_page = get_sections_from_page(page_soup)
 
     for section in sections_page:

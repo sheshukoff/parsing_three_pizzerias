@@ -4,8 +4,8 @@ from bs4 import BeautifulSoup
 def get_name(div: BeautifulSoup) -> str:
     """
     Функция возвращает название продукта
-    param div: BeautifulSoup
-    return: str
+    :param div: BeautifulSoup
+    :return: str
     """
     return div.text.strip()
 
@@ -13,8 +13,8 @@ def get_name(div: BeautifulSoup) -> str:
 def get_description(main: BeautifulSoup) -> str | None:
     """
     Функция возвращает описание продукта
-    param main: BeautifulSoup
-    return str | None
+    :param main: BeautifulSoup
+    :return: str | None
     """
 
     description = main.text.strip()
@@ -28,8 +28,8 @@ def get_description(main: BeautifulSoup) -> str | None:
 def get_price(div: BeautifulSoup) -> str:
     """
     Функция возращает цену.
-    param div: BeautifulSoup
-    return: str
+    :param div: BeautifulSoup
+    :return: str
     """
     return div.text.strip()
 
@@ -37,8 +37,8 @@ def get_price(div: BeautifulSoup) -> str:
 def get_new_and_old_prices(div: BeautifulSoup) -> tuple:
     """
     Функция возращает новую и страрую цену.
-    param div: BeautifulSoup
-    return tuple
+    :param div: BeautifulSoup
+    :return: tuple
     """
     get_old_price = div.div.extract()
     old_price = get_old_price.text.strip()
@@ -50,8 +50,8 @@ def get_new_and_old_prices(div: BeautifulSoup) -> tuple:
 def get_product_data(product_card: BeautifulSoup) -> dict:
     """
     Функция возращает все поля из карточки продукта
-    param product_card: BeautifulSoup
-    return: dict
+    :param product_card: BeautifulSoup
+    :return: dict
     """
 
     new_price = None
@@ -87,8 +87,8 @@ def get_product_data(product_card: BeautifulSoup) -> dict:
 def get_products_cards_from_section(section: BeautifulSoup) -> BeautifulSoup:
     """
     Функция возращает товары из секции
-    param section: BeautifulSoup
-    return: BeautifulSoup
+    :param section: BeautifulSoup
+    :return: BeautifulSoup
     """
     cards_products = section.find_all("article")
     return cards_products
@@ -97,8 +97,8 @@ def get_products_cards_from_section(section: BeautifulSoup) -> BeautifulSoup:
 def get_sections_from_page(page_soup: BeautifulSoup) -> BeautifulSoup:
     """
     Функция возращает список секций
-    param page_soup: BeautifulSoup
-    return: BeautifulSoup
+    :param page_soup: BeautifulSoup
+    :return: BeautifulSoup
     """
     sections = page_soup.main.find_all("section")
     return sections
@@ -107,8 +107,8 @@ def get_sections_from_page(page_soup: BeautifulSoup) -> BeautifulSoup:
 def get_page_soup_from_file(file_name: str) -> BeautifulSoup:
     """
     Функция возращает html разметку из файла
-    param file_name: str
-    return: BeautifulSoup
+    :param file_name: str
+    :return: BeautifulSoup
     """
     with open(file_name, "r", encoding="utf-8") as file:
         file_html = file.read()
@@ -141,12 +141,3 @@ def get_data_from_locality_dodo(file_name: str) -> dict[list[dict]]:
             result[name_sections] = temp
 
     return result
-
-
-# TODO Вынести в функцию пользоватся когда парсить с телефона
-# chrome_options.add_argument("user-agent=Mozilla/5.0"
-#                             " (iPhone; CPU iPhone OS 14_6 like Mac OS X)"
-#                             " AppleWebKit/605.1.15 (KHTML, like Gecko) "
-#                             "Version/14.0.3 Mobile/15E148 Safari/604.1") # парсинг со смартфона
-# driver = webdriver.Chrome(options=chrome_options) # веб драйвер
-#  {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 24, 25, 26, 27, 28, 29, 31, 32} длинна слова
