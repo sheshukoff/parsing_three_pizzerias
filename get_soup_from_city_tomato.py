@@ -2,8 +2,6 @@ import selenium
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-# from webdriver_manager.chrome import ChromeDriverManager
-
 import os
 import shutil
 import time
@@ -11,13 +9,15 @@ import time
 from bs4 import BeautifulSoup
 from working_with_the_user import find_url_cities_tomato
 from parser_tomato import get_data_from_locality_tomato
+from load_in_postgresql import load_database_description_product_card, load_table_brand, \
+    load_table_city, get_brand_id, get_city_id
 
 
 def get_page_soup_from_url(city_url: str) -> dict[str, BeautifulSoup]:
     """
     Функция возращает html разметку города.
-    param city_url: str
-    return: dict[str, BeautifulSoup]
+    :param city_url: str
+    :return: dict[str, BeautifulSoup]
     """
 
     section_tomato = ["pizza", "action", "snacks", "dessertdrink", "drinks"]
@@ -50,47 +50,73 @@ def check_path(path: str):
     """
     Функция проверяет существует ли папка
     :param path: str
-    :return:
     """
     if os.path.exists(path):
         shutil.rmtree(path)
 
 
-def write_file_from_soup(roster_soups: dict, name_city: str) -> list:
+def write_file_from_soup(roster_soups: dict, name_city: str, path_brand: str) -> list:
     """
     Функция записывает в файл html разметку города в файл формата HTML
-    param soup: BeautifulSoup
-    name_city: str
+    :param roster_soups: dict
+    :param name_city: str
+    :param path_brand: str
+    :return: list
     """
-    path_tomato = "Томато"
 
     file_sections = []
-    os.makedirs(os.path.join(path_tomato, name_city))
+    os.makedirs(os.path.join(path_brand, name_city))
     time.sleep(3)
 
     for section, soup in roster_soups.items():
         time.sleep(3)
-        with open(f"{path_tomato}/{name_city}/{section}.html", "w", encoding="utf-8") as file:
+        with open(f"{path_brand}/{name_city}/{section}.html", "w", encoding="utf-8") as file:
             file.write(str(soup))
-            file_sections.append(f"{path_tomato}/{name_city}/{section}.html")
+            file_sections.append(f"{path_brand}/{name_city}/{section}.html")
 
     return file_sections
 
 
-def parsing_tomato_pizza(tomato_cities):
-    path_tomato = "Томато"
+def create_file_html(path_brand: str, city: str) -> list:
+    """
+    Функция создает html файлы для дальнейшей работы (что бы не дергать сайт)
+    :param path_brand: str
+    :param city: str
+    :return: list
+    """
 
     all_url_cities = find_url_cities_tomato()
-    # all_correct_city = get_correct_city()
 
-    check_path(path_tomato)  # проверяет существует ли папка "Томато"
-    os.mkdir(path_tomato)  # Создается папка "Томато"
+    url_city = all_url_cities[city]
+    soup_city = get_page_soup_from_url(url_city)
+    file_sections = write_file_from_soup(soup_city, city, path_brand)
+    return file_sections
+
+
+def parsing_tomato_pizza(brand, tomato_cities):
+    """
+    Функция загружает данные по Бренду, городам и продуктам в базу данных
+    :param brand: str
+    :param tomato_cities: list
+    """
+
+    check_path(brand)  # проверяет существует ли папка "Томато"
+    os.mkdir(brand)  # Создается папка "Томато"
+
+    brand_id = get_brand_id(brand)
+    if not brand_id:
+        load_table_brand(brand)
+
+    brand_id = get_brand_id(brand)
 
     for city in tomato_cities:
-        print(city)
-        url_city = all_url_cities[city]
-        soup_city = get_page_soup_from_url(url_city)
-        file_sections = write_file_from_soup(soup_city, city)
+        city_id = get_city_id(city)
+        if not city_id:
+            load_table_city(city)
+
+        city_id = get_city_id(city)
+
+        file_sections = create_file_html(brand, city)
         for file_section in file_sections:
             data_from_locality = get_data_from_locality_tomato(file_section)
-            print(data_from_locality)
+            load_database_description_product_card(data_from_locality, brand_id, city_id)

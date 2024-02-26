@@ -2,7 +2,6 @@ import selenium
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-
 import os
 import shutil
 import time
@@ -10,16 +9,15 @@ import time
 from bs4 import BeautifulSoup
 from working_with_the_user import find_url_cities_dodo
 from parser_dodo import get_data_from_locality_dodo
-
-# from load_in_postgresql import load_database_description_product_card, load_table_brand, \
-#     load_table_city, load_table_section
+from load_in_postgresql import load_database_description_product_card, load_table_brand, \
+    load_table_city, get_brand_id, get_city_id
 
 
 def get_page_soup_from_url(city_url: str) -> BeautifulSoup:
     """
     Функция возращает html разметку города.
-    param city_url: str
-    return: BeautifulSoup
+    :param city_url: str
+    :return: BeautifulSoup
     """
 
     chrome_options = Options()
@@ -27,7 +25,6 @@ def get_page_soup_from_url(city_url: str) -> BeautifulSoup:
     chrome_options.add_argument("--disable-dev-shm-usage")
 
     driver = webdriver.Chrome()
-    # driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options)
     URL = f"https://dodopizza.ru{city_url}"
 
     try:
@@ -47,73 +44,64 @@ def check_path(path: str):
     """
     Функция проверяет существует ли папка
     :param path: str
-    :return:
     """
     if os.path.exists(path):
         shutil.rmtree(path)
 
 
-def write_file_from_soup(soup: BeautifulSoup, name_city: str):
+def write_file_from_soup(soup: BeautifulSoup, name_city: str, path_brand: str):
     """
     Функция записывает в файл html разметку города в файл формата HTML
-    param soup: BeautifulSoup
-    name_city: str
+    :param soup: BeautifulSoup
+    :param name_city: str
+    :param path_brand: str
     """
-    path_dodo = "Додо пицца"
 
-    with open(f"{path_dodo}/{name_city}.html", "w", encoding="utf-8") as file:
+    with open(f"{path_brand}/{name_city}.html", "w", encoding="utf-8") as file:
         file.write(str(soup))
 
 
-def create_file_html(city: str) -> str:
+def create_file_html(path_brand: str, city: str) -> str:
     """
     Функция создает html файлы для дальнейшей работы (что бы не дергать сайт)
-    param list_cities: list
+    :param path_brand: str
+    :param city: str
+    :return: str
     """
-    path_dodo = "Додо пицца"
+
     all_url_cities = find_url_cities_dodo()  # получение всех возможных городов для парсинга
 
     url_city = all_url_cities[city]
     soup_city = get_page_soup_from_url(url_city)
-    write_file_from_soup(soup_city, city)
-    file_name = f"{path_dodo}/{city}.html"  # Переделать так как город уже есть
+    write_file_from_soup(soup_city, city, path_brand)
+    file_name = f"{path_brand}/{city}.html"
 
     return file_name
 
 
-def parsing_dodo_pizza(dodo_cities: list):
+def parsing_dodo_pizza(brand: str, dodo_cities: list):
     """
     Функция загружает данные по Бренду, городам и продуктам в базу данных
+    :param brand: str
+    :param dodo_cities: list
     """
-    brand = "Додо пицца"
+
     check_path(brand)  # проверяет существует ли папка "Додо пицца"
     os.mkdir(brand)  # Создается папка "Додо пицца"
-    # load_table_brand(brand)
 
-    # all_correct_city = get_correct_city()
-    brand_id = 1
-    city_id = 1
+    brand_id = get_brand_id(brand)
+    if not brand_id:
+        load_table_brand(brand)
 
-    load_sections = False
+    brand_id = get_brand_id(brand)
 
     for city in dodo_cities:
-        print(city)
-        file_name = create_file_html(city)
+        city_id = get_city_id(city)
+        if not city_id:
+            load_table_city(city)
 
-        # load_table_city(city)
-        #
+        city_id = get_city_id(city)
+
+        file_name = create_file_html(brand, city)
         data_from_locality = get_data_from_locality_dodo(file_name)
-        print(data_from_locality)
-        # sections = data_from_locality.keys()
-        #
-        # if not load_sections:
-        #     for section in sections:
-        #         try:
-        #             load_table_section(section) # Load in table Section - name section (example - 'Пицца')
-        #             load_sections = True
-        #         except Exception as error:
-        #             print('Загружать в таблицу (Section) можно только уникальные названия секций/разделов!!!')
-        #
-        # load_database_description_product_card(data_from_locality, brand_id, city_id)
-        #
-        # city_id += 1
+        load_database_description_product_card(data_from_locality, brand_id, city_id)
