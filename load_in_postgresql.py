@@ -25,10 +25,49 @@ def int_price(price: str) -> int | None:
         return int(new_price)
 
 
+def get_brand_id(name_brand: str) -> int | None:
+    """
+    Функция ищет id бренда по названию в базе данных
+    :param name_brand: str
+    :return: int | None
+    """
+    brand = session.query(Brand).filter(Brand.name == name_brand).first()
+    if brand:
+        return brand.id
+    return None
+
+
+def get_city_id(name_city: str) -> int | None:
+    """
+    Функция ищет id города по названию в базе данных
+    :param name_city: str
+    :return: int | None
+    """
+
+    city = session.query(City).filter(City.name == name_city).first()
+    if city:
+        return city.id
+    return None
+
+
+def get_section_id(name_section: str) -> int | None:
+    """
+    Функция ищет id секции по названию в базе данных
+    :param name_section: str
+    :return: int | None
+    """
+
+    section = session.query(Section).filter(Section.name == name_section).first()
+    if section:
+        return section.id
+    return None
+
+
 def load_table_brand(brand: str):
     """
     Функция загружает данные в базу данных, в таблицу "brand".
     Пример ('Додо пицца')
+    :param brand: str
     """
 
     insert_brand = [
@@ -46,6 +85,7 @@ def load_table_city(name_city: str):
     """
     Функция загружает данные в базу данных, в таблицу "city".
     Пример ('Воронеж')
+    :param name_city: str
     """
 
     insert_city = [
@@ -63,6 +103,7 @@ def load_table_section(name_section: str):
     """
     Функция загружает данные в базу данных, в таблицу "section".
     Пример ('Пицца', 'Закуски' и т.п)
+    :param name_section: str
     """
 
     insert_section = [
@@ -76,15 +117,20 @@ def load_table_section(name_section: str):
     session.commit()
 
 
-def load_database_description_product_card(
-    data_from_locality: dict[list[dict]], brand_id: int, city_id: int
-):
+def load_database_description_product_card(data_from_locality: dict[list[dict]], brand_id: int, city_id: int):
     """
     Функция загружает данные в базу данных, в таблицу 'product'.
+    :param data_from_locality: dict[list[dict]]
+    :param brand_id: int
+    :param city_id: int
     """
-    section_id = 1
 
     for section, products_cards in data_from_locality.items():
+        section_id = get_section_id(section)
+        if not section_id:
+            load_table_section(section)
+
+        section_id = get_section_id(section)
         print(section_id, section)
         for product_card in products_cards:
             name = product_card.get("name")
@@ -111,8 +157,6 @@ def load_database_description_product_card(
             )
             result = insert_value.all()
             print(result)
-
-        section_id += 1
 
     session.commit()
 
