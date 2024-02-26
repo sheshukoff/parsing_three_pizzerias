@@ -10,7 +10,7 @@ from selenium.webdriver.common.by import By
 def update_url_cities_dodo() -> BeautifulSoup:
     """
     Функция возращает html разметку города.
-    return: BeautifulSoup
+    :return: BeautifulSoup
     """
 
     chrome_options = Options()
@@ -38,7 +38,7 @@ def update_url_cities_dodo() -> BeautifulSoup:
 def update_url_cities_tashir() -> BeautifulSoup:
     """
     Функция возращает html разметку города.
-    return: BeautifulSoup
+    :return: BeautifulSoup
     """
 
     chrome_options = webdriver.ChromeOptions()
@@ -67,7 +67,7 @@ def update_url_cities_tashir() -> BeautifulSoup:
 def update_url_cities_tomato() -> BeautifulSoup:
     """
     Функция возращает html разметку города.
-    return: BeautifulSoup
+    :return: BeautifulSoup
     """
 
     chrome_options = webdriver.ChromeOptions()
@@ -94,8 +94,8 @@ def update_url_cities_tomato() -> BeautifulSoup:
 def write_file_urls(soup: BeautifulSoup, name_brand: str):
     """
     Функция записывает в файл html разметку города в файл формата HTML
-    param soup: BeautifulSoup
-    name_city: str
+    :param soup: BeautifulSoup
+    :param name_brand: str
     """
-    with open(f"URLS_{name_brand}.html", "w", encoding='utf-8') as file:# делаем файл в html, чтобы дергать сайт
+    with open(f"URLS_{name_brand}.html", "w", encoding='utf-8') as file:
         file.write(str(soup))
