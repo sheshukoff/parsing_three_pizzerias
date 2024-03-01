@@ -63,6 +63,24 @@ def get_section_id(name_section: str) -> int | None:
     return None
 
 
+def update_date_product(brand_id: int, city_id: int):
+    """
+    Функция удаляет данные по бренду в определенном городе.
+    :param brand_id: int
+    :param city_id: int
+    """
+    data_to_delete = (
+        session.query(Product)
+        .filter(Product.brand_id == brand_id)
+        .filter(Product.city_id == city_id).all()
+    )
+
+    for item in data_to_delete:
+        session.delete(item)
+
+    session.commit()
+
+
 def load_table_brand(brand: str):
     """
     Функция загружает данные в базу данных, в таблицу "brand".
@@ -130,7 +148,7 @@ def load_database_description_product_card(data_from_locality: dict[list[dict]],
         if not section_id:
             load_table_section(section)
 
-        section_id = get_section_id(section)
+            section_id = get_section_id(section)
         print(section_id, section)
         for product_card in products_cards:
             name = product_card.get("name")
