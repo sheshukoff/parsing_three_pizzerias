@@ -7,11 +7,7 @@ def recieve_user_login(input_login: str):
     :param input_login: str
     :return: str
     """
-    user = (
-        session.query(Authorized_users)
-        .filter(Authorized_users.login == input_login)
-        .first()
-    )
+    user = session.query(Authorized_users).filter(Authorized_users.login == input_login).first()
     if user is None:
         return None
     user_login = user.login
