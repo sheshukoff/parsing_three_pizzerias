@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 from working_with_the_user import find_url_cities_tashir
 from parser_tashir import get_data_from_locality_tashir
 from load_in_postgresql import load_database_description_product_card, load_table_brand, \
-    load_table_city, get_brand_id, get_city_id
+    load_table_city, get_brand_id, get_city_id, update_date_product
 
 
 def get_page_soup_from_url(city_url: str) -> BeautifulSoup:
@@ -92,15 +92,15 @@ def parsing_tashir_pizza(brand: str, tashir_cities: list):
     brand_id = get_brand_id(brand)
     if not brand_id:
         load_table_brand(brand)
-
-    brand_id = get_brand_id(brand)
+        brand_id = get_brand_id(brand)
 
     for city in tashir_cities:
         city_id = get_city_id(city)
         if not city_id:
             load_table_city(city)
-
-        city_id = get_city_id(city)
+            city_id = get_city_id(city)
+        else:
+            update_date_product(brand_id, city_id)
 
         file_name = create_file_html(brand, city)
         data_from_locality = get_data_from_locality_tashir(file_name)

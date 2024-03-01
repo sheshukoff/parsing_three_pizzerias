@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 from working_with_the_user import find_url_cities_tomato
 from parser_tomato import get_data_from_locality_tomato
 from load_in_postgresql import load_database_description_product_card, load_table_brand, \
-    load_table_city, get_brand_id, get_city_id
+    load_table_city, get_brand_id, get_city_id, update_date_product
 
 
 def get_page_soup_from_url(city_url: str) -> dict[str, BeautifulSoup]:
@@ -100,21 +100,21 @@ def parsing_tomato_pizza(brand, tomato_cities):
     :param tomato_cities: list
     """
 
-    check_path(brand)  # проверяет существует ли папка "Томато"
-    os.mkdir(brand)  # Создается папка "Томато"
+    check_path(brand)
+    os.mkdir(brand)
 
     brand_id = get_brand_id(brand)
     if not brand_id:
         load_table_brand(brand)
-
-    brand_id = get_brand_id(brand)
+        brand_id = get_brand_id(brand)
 
     for city in tomato_cities:
         city_id = get_city_id(city)
         if not city_id:
             load_table_city(city)
-
-        city_id = get_city_id(city)
+            city_id = get_city_id(city)
+        else:
+            update_date_product(brand_id, city_id)
 
         file_sections = create_file_html(brand, city)
         for file_section in file_sections:
