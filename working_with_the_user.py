@@ -6,8 +6,8 @@ from update_urls_cities import update_url_cities_dodo, update_url_cities_tashir,
 def get_page_soup_from_file(file_name: str) -> BeautifulSoup:
     """
     Функция возращает html разметку из файла
-    param file_name: str
-    return: BeautifulSoup
+    :param file_name: str
+    :return: BeautifulSoup
     """
     with open(file_name, "r", encoding="utf-8") as file:
         file_html = file.read()
@@ -20,7 +20,7 @@ def get_page_soup_from_file(file_name: str) -> BeautifulSoup:
 def find_url_cities_dodo() -> dict:
     """
     Функция на возращает all_url_cities. Пример -> ('Воронеж': '/voronezh').
-    return: dict
+    :return: dict
     """
 
     URL = 'URLS_Додо.html'
@@ -40,7 +40,7 @@ def find_url_cities_dodo() -> dict:
 def find_url_cities_tashir() -> dict:
     """
     Функция на возращает all_url_cities. Пример -> ('Воронеж': '/voronezh').
-    return: dict
+    :return: dict
     """
 
     URL = 'URLS_Ташир.html'
@@ -62,7 +62,7 @@ def find_url_cities_tashir() -> dict:
 def find_url_cities_tomato() -> dict:
     """
     Функция на возращает all_url_cities. Пример -> ('Воронеж': '/voronezh').
-    return: dict
+    :return: dict
     """
 
     URL = 'URLS_Томато.html'
@@ -90,25 +90,25 @@ def find_url_cities_tomato() -> dict:
 def choose_brand():
     """
     Функция возращает список брендов, коротые выбрал пользователь.
-    return: list
+    :return: list
     """
-    brand_list = ["Додо", "Ташир", "Томато"]
+    BRAND_LIST = ["Додо", "Ташир", "Томато"]
     selected_brands = []
 
     while True:
         print("Выберите бренд или введите 'готово', чтобы закончить:")
-        for number, brand in enumerate(brand_list, 1):
+        for number, brand in enumerate(BRAND_LIST, 1):
             print(f"{number}. {brand}")
 
         choice = input()
 
-        if choice.isdigit() and 1 <= int(choice) <= len(brand_list):
-            selected_brands.append(brand_list[int(choice) - 1])
-            brand_list.remove(brand_list[int(choice) - 1])
+        if choice.isdigit() and 1 <= int(choice) <= len(BRAND_LIST):
+            selected_brands.append(BRAND_LIST[int(choice) - 1])
+            BRAND_LIST.remove(BRAND_LIST[int(choice) - 1])
         elif choice.lower() == "готово":
             break
         else:
-            print("Некорректный ввод. Пожалуйста, выберите число от 1 до", len(brand_list))
+            print("Некорректный ввод. Пожалуйста, выберите число от 1 до", len(BRAND_LIST))
 
     print("Выбранные бренды:")
     for brand in selected_brands:
@@ -117,7 +117,7 @@ def choose_brand():
     return selected_brands
 
 
-def test_choose_city(brand: str, url_cities_brand: dict) -> dict:
+def choose_city(brand: str, url_cities_brand: dict) -> dict:
     """
     Функция возращает список брендов, коротые выбрал пользователь.
     :param brand: str
@@ -141,32 +141,38 @@ def test_choose_city(brand: str, url_cities_brand: dict) -> dict:
         elif choice.lower() == "готово":
             break
         else:
-            print("Некорректный ввод. Пожалуйста, выберите число от 1 до",len(list_cities),)
+            print(f"Некорректный ввод. Пожалуйста, выберите число от 1 до {len(list_cities)}")
 
     roster[brand] = selected_cities
 
     return roster
 
 
-def get_city_for_brand(list_brands: list):
+def get_city_for_brand(list_brands: list) -> list:
+    """
+    Функция возращает список городов для брендов
+    :param list_brands: str
+    :return: list
+    """
+
     city_for_brand = []
 
     for brand in list_brands:
         if brand == "Додо":
             url_cities_dodo = find_url_cities_dodo()
-            roster_dodo = test_choose_city(brand, url_cities_dodo)
+            roster_dodo = choose_city(brand, url_cities_dodo)
             city_for_brand.append(roster_dodo)
             print("Выбранные города:")
             print(roster_dodo)
         elif brand == "Ташир":
             url_cities_tashir = find_url_cities_tashir()
-            roster_tashir = test_choose_city(brand, url_cities_tashir)
+            roster_tashir = choose_city(brand, url_cities_tashir)
             city_for_brand.append(roster_tashir)
             print("Выбранные города:")
             print(roster_tashir)
         elif brand == "Томато":
             url_cities_tomato = find_url_cities_tomato()
-            roster_tomato = test_choose_city(brand, url_cities_tomato)
+            roster_tomato = choose_city(brand, url_cities_tomato)
             city_for_brand.append(roster_tomato)
             print("Выбранные города:")
             print(roster_tomato)
@@ -174,9 +180,10 @@ def get_city_for_brand(list_brands: list):
     return city_for_brand
 
 
-def big_work_with_user():
+def big_work_with_user() -> list:
     """
     Функция для работы с пользователем. Обновляет города, которые будут доступны для пользователяю.
+    :return: list
     """
 
     input_message = input("Нужно ли обновить города по пиццериям напишите Y/n: ")
