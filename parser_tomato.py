@@ -90,7 +90,7 @@ def get_products_cards_from_section(section: BeautifulSoup) -> BeautifulSoup:
 
 def processing_section_name(page_soup: BeautifulSoup) -> str:
     """
-    Функция обрабатывает название секции (В пиццерии ТОМАТО секция 'Пицца в Воронеже: меню с ценами' -> 'Пицца'
+    Функция обрабатывает название секции (В пиццерии ТОМАТО секция 'Пицца в Воронеже: меню с ценами' -> 'Пицца')
     :param page_soup: BeautifulSoup
     :return: str
     """
