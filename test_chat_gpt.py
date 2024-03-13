@@ -1,23 +1,11 @@
 import dash_bootstrap_components as dbc
-from dash import html, Input, Output, dash_table
+from dash import html, Input, Output, callback
 import dash
-from work_with_dash import data, columns
+from work_with_dash import data
 
 app = dash.Dash(__name__, title="Checklist Test", external_stylesheets=[dbc.themes.SLATE])
 
-# toggle_switch_active = html.Div(
-#     [
-#         html.Div(
-#             [
-#                 dbc.Switch(
-#                     id="flexSwitchCheckChecked",
-#                     class_name="form-check-input",
-#                     value=False,
-#                 ),
-#             ]
-#         )
-#     ]
-# )
+PAGE_SIZE = 15
 
 toggle_switch_active = html.Div(
     [
@@ -50,62 +38,157 @@ def check_toggle_switch(type_boolean: bool):
     return toggle_switch_disabled
 
 
-active_page = 1
-PAGE_SIZE = 15
-rows = []
-print(len(data))
-header = [
-    html.Thead(html.Tr([html.Th("Города"), html.Th("Додо"), html.Th("Ташир"), html.Th("Томато")]))
-]
+def get_total_page(page_size, total_data):
+    data_div_page_size = total_data // page_size
+    data_mod_page_size = total_data % page_size
+    total_page = data_div_page_size if data_mod_page_size == 0 else (data_div_page_size + 1)
 
-start = (active_page - 1) * PAGE_SIZE
-end = start + PAGE_SIZE
+    return total_page
 
-for row in data[start:end]:
-    row = html.Thead([html.Td(row['city']),
-                      html.Td(check_toggle_switch(row['dodo'])),
-                      html.Th(check_toggle_switch(row['tashir'])),
-                      html.Th(check_toggle_switch(row['tomato']))
-                      ])
-    rows.append(row)
 
-table = header + rows
-
-app.layout = html.Div(
-    children=[
-        dbc.Table(table, id="table-paginated", color='dark', bordered=True),
-        dbc.Pagination(
-            id="pagination",
-            max_value=len(data) // PAGE_SIZE + (1 if len(data) % PAGE_SIZE else 0),
-            active_page=1,
-            first_last=True,
-        ),
+def get_data_pagination(part_table):
+    table_header = [
+        html.Thead(
+            html.Tr([
+                html.Th("Города"),
+                html.Th("Додо"),
+                html.Th("Ташир"),
+                html.Th("Томато"),
+            ])
+        )
     ]
-)
+
+    table_rows = []
+    for row in part_table:
+        table_row = html.Tr([
+            html.Td(row['city']),
+            html.Td(check_toggle_switch(row['dodo'])),
+            html.Td(check_toggle_switch(row['tashir'])),
+            html.Td(check_toggle_switch(row['tomato'])),
+        ])
+        table_rows.append(table_row)
+
+    table_body = [html.Tbody(table_rows)]
+
+    table = dbc.Table(table_header + table_body, striped=True, bordered=True, hover=True, className='p-3')
+
+    return table
 
 
-@app.callback(
-    Output("table-paginated", "children"),
-    Input("pagination", "active_page"),
+@callback(
+    Output('score-list', 'children'),
+    Input('pagination', 'active_page'),
 )
-def update_table(active_page):
+def table_pagination(active_page):
     start = (active_page - 1) * PAGE_SIZE
     end = start + PAGE_SIZE
-    header = [
-        html.Thead(html.Tr([html.Th("Города"), html.Th("Додо"), html.Th("Ташир"), html.Th("Томато")]))
-    ]
-    rows = []
-    rows.append(header)
-    for row in data[start:end]:
-        row = html.Thead([html.Th(row['city']),
-                          html.Th(check_toggle_switch(row['dodo'])),
-                          html.Th(check_toggle_switch(row['tashir'])),
-                          html.Th(check_toggle_switch(row['tomato']))
-                          ])
-        rows.append(html.Thead([html.Td(cell) for cell in row]))
 
-    table = header + rows
+    part_table = data[start:end]
+    table = get_data_pagination(part_table)
+
     return table
+
+
+# active_page = 3
+# PAGE_SIZE = 15
+# rows = []
+# header = [
+#     html.Thead(html.Tr([html.Th("Города"), html.Th("Додо"), html.Th("Ташир"), html.Th("Томато")]))
+# ]
+#
+# start = (active_page - 1) * PAGE_SIZE
+# end = start + PAGE_SIZE
+#
+# print(start, end)
+#
+# for row in data[start:end]:
+#     row = html.Tr([html.Td(row['city']),
+#                    html.Td(check_toggle_switch(row['dodo'])),
+#                    html.Td(check_toggle_switch(row['tashir'])),
+#                    html.Td(check_toggle_switch(row['tomato']))
+#                    ])
+#     rows.append(row)
+#
+# table_body = [html.Tbody(rows)]
+#
+# table = header + table_body
+
+# @callback(
+#     Output('score-list', 'children'),
+#     Input('pagination', 'active_page'),
+# )
+# def update_list_scores(page):
+#     # convert active_page data to integer and set default value to 1
+#     int_page = 1 if not page else int(page)
+#
+#     # define filter index range based on active page
+#     filter_index_1 = (int_page - 1) * PAGE_SIZE
+#     filter_index_2 = (int_page) * PAGE_SIZE
+#
+#     # get data by filter range based on active page number
+#     fitler_scores = top_100_scores[filter_index_1:filter_index_2]
+#
+#     # load data to dash bootstrap table component
+#     table = get_student_score_list(fitler_scores, (filter_index_1 + 1))
+#
+#     return table
+
+
+# pagination = html.Div([dbc.Pagination(id="pagination",
+#                                       active_page=1,
+#                                       min_value=1,
+#                                       max_value=len(data) // PAGE_SIZE + (1 if len(data) % PAGE_SIZE else 0),
+#                                       first_last=True,
+#                                       )])
+
+app.layout = html.Div(
+    [
+        dbc.Table(id="score-list"),
+        dbc.Pagination(id="pagination",
+                       max_value=get_total_page(PAGE_SIZE, len(data)),
+                       fully_expanded=False)
+    ],
+)
+
+
+# @callback(
+#     Output('score-list', 'children'),
+#     Input('pagination', 'active_page'),
+# )
+# def update_table(active_page):
+
+
+# @app.callback(
+#     Output("pagination-contents", "children"),
+#     [Input("pagination", "active_page")],
+# )
+# def change_page(page):
+#     if page:
+#         return f"Page selected: {page}"
+#     return "Select a page"
+
+# @app.callback(
+#     Output("table-paginated", "children"),
+#     Input("pagination", "active_page"),
+# )
+# def update_table(active_page):
+#     start = (active_page - 1) * PAGE_SIZE
+#     end = start + PAGE_SIZE
+#     header = [
+#         html.Thead(html.Tr([html.Th("Города"), html.Th("Додо"), html.Th("Ташир"), html.Th("Томато")]))
+#     ]
+#     rows = []
+#     rows.append(header)
+#     for row in data[start:end]:
+#         row = html.Thead([html.Th(row['city']),
+#                           html.Th(check_toggle_switch(row['dodo'])),
+#                           html.Th(check_toggle_switch(row['tashir'])),
+#                           html.Th(check_toggle_switch(row['tomato']))
+#                           ])
+#         rows.append(html.Thead([html.Td(cell) for cell in row]))
+#
+#     table = header + rows
+#     return table
 
 
 if __name__ == "__main__":
@@ -158,19 +241,33 @@ if __name__ == "__main__":
 # style,
 # value
 
-
-# switches = html.Div(
-#     [
-#         dbc.Label("Toggle a bunch"),
-#         dbc.Checklist(
-#             options=[
-#                 {"label": "Option 1", "value": 1},
-#                 {"label": "Option 2", "value": 2},
-#                 {"label": "Disabled Option", "value": 3, "disabled": True},
-#             ],
-#             value=[1],
-#             id="switches-input",
-#             switch=True,
-#         ),
-#     ]
+# @callback(
+#     Output('score-list', 'children'),
+#     Input('pagination', 'active_page'),
 # )
+# def update_list_scores(page):
+#     # convert active_page data to integer and set default value to 1
+#     int_page = 1 if not page else int(page)
+#
+#     # define filter index range based on active page
+#     filter_index_1 = (int_page - 1) * PAGE_SIZE
+#     filter_index_2 = (int_page) * PAGE_SIZE
+#
+#     # get data by filter range based on active page number
+#     fitler_scores = top_100_scores[filter_index_1:filter_index_2]
+#
+#     # load data to dash bootstrap table component
+#     table = get_student_score_list(fitler_scores, (filter_index_1 + 1))
+#
+#     return table
+
+
+# def get_total_page(page_size, total_data):
+#     data_div_page_size = total_data // page_size
+#     data_mod_page_size = total_data % page_size
+#     total_page = data_div_page_size if data_mod_page_size == 0 else (data_div_page_size + 1)
+#
+#     return total_page
+
+# dbc.Table(id="score-list"),
+# dbc.Pagination(id="pagination", max_value=get_total_page(PAGE_SIZE, 100), fully_expanded=False)
