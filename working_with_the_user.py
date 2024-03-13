@@ -129,7 +129,6 @@ def choose_city(brand: str, url_cities_brand: dict) -> dict:
     roster = {}
 
     while True:
-        # print("Выберите бренд или введите 'готово', чтобы закончить:")
         for number, city in enumerate(list_cities, 1):
             print(f"{number} -- {city}")
         print(f'Выберите "номер" города для бренда {brand} или введите "готово", чтобы закончить ->')
