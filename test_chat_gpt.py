@@ -4,7 +4,6 @@ import dash
 from work_with_dash import data
 from components_for_dash_table import get_data_pagination, get_total_page
 
-
 app = dash.Dash(__name__, title="Checklist Test", external_stylesheets=[dbc.themes.SLATE])
 
 PAGE_SIZE = 15
@@ -14,7 +13,7 @@ PAGE_SIZE = 15
     Output('score-list', 'children'),
     Input('pagination', 'active_page'),
 )
-def table_pagination(number_page: int):
+def table_pagination(number_page: int) -> object:
     active_page = 1 if not number_page else int(number_page)
 
     start = (active_page - 1) * PAGE_SIZE
@@ -32,35 +31,17 @@ app.layout = html.Div(
         dbc.Pagination(
             id="pagination",
             max_value=get_total_page(PAGE_SIZE, len(data)),
-            fully_expanded=False
-        )
+            fully_expanded=False,
+            style={'position': 'relative', 'left': '800px', 'top': '-20px'}
+        ),
     ],
+    style={'width': '70%',
+           'position': 'absolute',
+           'top': '50%',
+           'left': '50%',
+           'transform': 'translate(-50%, -50%)',
+           },
 )
-
 
 if __name__ == "__main__":
     app.run_server(debug=True)
-
-
-# className,
-# class_name,
-# disabled,
-# id,
-# inputClassName,
-# inputStyle,
-# input_class_name,
-# input_style,
-# label,
-# labelClassName,
-# labelStyle,
-# label_class_name,
-# label_id,
-# label_style,
-# loading_state,
-# name,
-# persisted_props,
-# persistence,
-# persistence_type,
-# style,
-# value
-
