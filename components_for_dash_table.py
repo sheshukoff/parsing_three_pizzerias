@@ -5,11 +5,11 @@ toggle_switch_active = html.Div(
     [
         dbc.Switch(
             id="active-switches-input",
+            label="switch",
             value=False,
         ),
     ],
     className='toggle_switch_active',
-    style={'margin-left': '40%'},
 )
 
 toggle_switch_disabled = html.Div(
@@ -21,7 +21,6 @@ toggle_switch_disabled = html.Div(
         ),
     ],
     className='toggle_switch_disabled',
-    style={'margin-left': '40%'},
 )
 
 
@@ -43,27 +42,25 @@ def get_data_pagination(part_table) -> object:
     table_header = [
         html.Thead(
             html.Tr([
-                html.Th("Города",
-                        style={'width': '30%', 'text-transform': 'uppercase'}),
-                html.Th("Додо",
-                        style={'width': '10%', 'text-transform': 'uppercase'}),
-                html.Th("Ташир",
-                        style={'width': '10%', 'text-transform': 'uppercase'}),
-                html.Th("Томато",
-                        style={'width': '10%', 'text-transform': 'uppercase'}),
+                html.Th("Города", id="header-city"),
+                html.Th("Додо", id="header-dodo"),
+                html.Th("Ташир", id="header-tashir"),
+                html.Th("Томато", id="header-tomato"),
             ]),
-            style={'font-family': 'Lobster', 'text-align': 'center'}
-        )
+            className="header",
+        ),
     ]
 
     table_rows = []
     for row in part_table:
-        table_row = html.Tr([
-            html.Td(row['city'], style={'width': '30%', 'font-size': '16px'}),
-            html.Td(check_toggle_switch(row['dodo']), style={'width': '10%'}),
-            html.Td(check_toggle_switch(row['tashir']), style={'width': '10%'}),
-            html.Td(check_toggle_switch(row['tomato']), style={'width': '10%'}),
-        ])
+        table_row = html.Tr(
+            [
+                html.Td(row['city'], id="city-cell"),
+                html.Td(check_toggle_switch(row['dodo']), id="dodo-cell"),
+                html.Td(check_toggle_switch(row['tashir']), id="tashir-cell"),
+                html.Td(check_toggle_switch(row['tomato']), id="tomato-cell"),
+            ]
+        )
         table_rows.append(table_row)
 
     table_body = [html.Tbody(table_rows)]
