@@ -9,6 +9,13 @@ app = dash.Dash(__name__, title="Checklist Test", external_stylesheets=[dbc.them
 PAGE_SIZE = 15
 
 
+@app.callback(Output('score-list', 'data'),
+              Input('form-check-input', 'id'))
+def update_loosers(id_number):
+    print(id_number)
+    return None
+
+
 @callback(
     Output('score-list', 'children'),
     Input('pagination', 'active_page'),
