@@ -32,15 +32,10 @@ app.layout = html.Div(
             id="pagination",
             max_value=get_total_page(PAGE_SIZE, len(data)),
             fully_expanded=False,
-            style={'position': 'relative', 'left': '800px', 'top': '-20px'}
         ),
     ],
-    style={'width': '70%',
-           'position': 'absolute',
-           'top': '50%',
-           'left': '50%',
-           'transform': 'translate(-50%, -50%)',
-           },
+    className="table-pagination",
+
 )
 
 if __name__ == "__main__":
