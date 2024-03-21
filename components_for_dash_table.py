@@ -1,33 +1,33 @@
 import dash_bootstrap_components as dbc
 from dash import html
 
-toggle_switch_active = html.Div(
-    [
-        dbc.Switch(
-            id="active-switches-input",
-            label="switch",
-            value=False,
-        ),
-    ],
-    className='toggle_switch_active',
-)
 
-toggle_switch_disabled = html.Div(
-    [
-        dbc.Switch(
-            id="disabled-switches-input",
-            value=False,
-            disabled=True,
-        ),
-    ],
-    className='toggle_switch_disabled',
-)
-
-
-def check_toggle_switch(type_boolean: bool) -> object:
+def check_toggle_switch(type_boolean: bool, id: str) -> object:
     if type_boolean is True:
-        return toggle_switch_active
-    return toggle_switch_disabled
+        return html.Div(
+            [
+                dbc.Switch(
+                    id=id,
+                    # id="active-switches-input",
+                    className="switch-active",
+                    label="switch",
+                    value=False,
+                ),
+            ],
+            className='toggle_switch_active',
+        )
+    return html.Div(
+        [
+            dbc.Switch(
+                id=id,
+                # id="disabled-switches-input",
+                className="switch-disabled",
+                value=False,
+                disabled=True,
+            ),
+        ],
+        className='toggle_switch_disabled',
+    )
 
 
 def get_total_page(page_size: int, total_data: int) -> int:
@@ -52,13 +52,13 @@ def get_data_pagination(part_table) -> object:
     ]
 
     table_rows = []
-    for row in part_table:
+    for id, row in enumerate(part_table):
         table_row = html.Tr(
             [
                 html.Td(row['city'], id="city-cell"),
-                html.Td(check_toggle_switch(row['dodo']), id="dodo-cell"),
-                html.Td(check_toggle_switch(row['tashir']), id="tashir-cell"),
-                html.Td(check_toggle_switch(row['tomato']), id="tomato-cell"),
+                html.Td(check_toggle_switch(row['dodo'], f'{id}-{0}'), id="dodo-cell"),
+                html.Td(check_toggle_switch(row['tashir'], f'{id}-{1}'), id="tashir-cell"),
+                html.Td(check_toggle_switch(row['tomato'], f'{id}-{2}'), id="tomato-cell"),
             ]
         )
         table_rows.append(table_row)
