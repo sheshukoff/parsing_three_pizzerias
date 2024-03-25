@@ -1,23 +1,35 @@
 import dash_bootstrap_components as dbc
-from dash import html, Input, Output, callback
+from dash import html, Input, Output, callback_context, ALL, callback
 import dash
 from work_with_dash import data
 from components_for_dash_table import get_data_pagination, get_total_page
 
-app = dash.Dash(__name__, title="Checklist Test", external_stylesheets=[dbc.themes.SLATE])
+app = dash.Dash(__name__,
+                title="Checklist Test",
+                suppress_callback_exceptions=True,
+                external_stylesheets=[dbc.themes.SLATE]
+                )
 
 PAGE_SIZE = 15
 
 
-@app.callback(Output('score-list', 'data'),
-              Input('form-check-input', 'id'))
-def update_loosers(id_number):
-    print(id_number)
-    return None
+@callback(
+    Output('output-switch-active', 'children'),
+    [Input({'type': 'dynamic-switch', 'index': ALL}, 'value')]
+)
+def display(*args):
+    ctx = callback_context
+    if not ctx.triggered:
+        return 'Переключите один из переключателей'
+    else:
+        switch_id = ctx.triggered[0]['prop_id'].split('.')[0]
+        switch_value = ctx.triggered[0]['value']
+        print(switch_id, switch_value)
+        return f'Переключатель {switch_id} теперь {"включен" if switch_value else "выключен"}'
 
 
 @callback(
-    Output('score-list', 'children'),
+    Output('table', 'children'),
     Input('pagination', 'active_page'),
 )
 def table_pagination(number_page: int) -> object:
@@ -34,7 +46,7 @@ def table_pagination(number_page: int) -> object:
 
 app.layout = html.Div(
     children=[
-        dbc.Table(id="score-list"),
+        dbc.Table(id="table"),
         dbc.Pagination(
             id="pagination",
             max_value=get_total_page(PAGE_SIZE, len(data)),
@@ -42,7 +54,6 @@ app.layout = html.Div(
         ),
     ],
     className="table-pagination",
-
 )
 
 if __name__ == "__main__":
