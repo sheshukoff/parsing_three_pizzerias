@@ -54,19 +54,50 @@ def sorted_cities(brand_cities: dict) -> dict:
 
     sort_cities = {}
 
+    temp = {}
+
     for city, brands in brand_cities.items():
         if brands == [True, True, True]:
-            sort_cities[city] = brands
-        elif brands[2] is True:
-            sort_cities[city] = brands
+            temp[city] = brands
+
+    sorted_brand_cities = dict(sorted(temp.items()))
+    sort_cities = sort_cities | sorted_brand_cities
+
+    temp = {}
+
+    for city, brands in brand_cities.items():
+        if brands == [True, False, True]:
+            temp[city] = brands
+
+    sorted_brand_cities = dict(sorted(temp.items()))
+    sort_cities = sort_cities | sorted_brand_cities
+
+    temp = {}
+
+    for city, brands in brand_cities.items():
+        if brands == [False, False, True]:
+            temp[city] = brands
+
+    sorted_brand_cities = dict(sorted(temp.items()))
+    sort_cities = sort_cities | sorted_brand_cities
+
+    temp = {}
 
     for city, brands in brand_cities.items():
         if brands == [True, True, False]:
-            sort_cities[city] = brands
+            temp[city] = brands
+
+    sorted_brand_cities = dict(sorted(temp.items()))
+    sort_cities = sort_cities | sorted_brand_cities
+
+    temp ={}
 
     for city, brands in brand_cities.items():
         if brands == [True, False, False]:
-            sort_cities[city] = brands
+            temp[city] = brands
+
+    sorted_brand_cities = dict(sorted(temp.items()))
+    sort_cities = sort_cities | sorted_brand_cities
 
     return sort_cities
 
