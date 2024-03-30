@@ -2,12 +2,12 @@ import dash_bootstrap_components as dbc
 from dash import html
 
 
-def check_toggle_switch(type_boolean: bool, id: str) -> object:
+def check_toggle_switch(type_boolean: bool, id_str: str) -> object:
     if type_boolean is True:
         return html.Div(
             [
                 dbc.Switch(
-                    id={'type': 'dynamic-switch', 'index': id},
+                    id={'type': 'dynamic-switch', 'index': id_str},
                     # id=id,
                     label="switch-active",
                     value=False,
@@ -18,7 +18,7 @@ def check_toggle_switch(type_boolean: bool, id: str) -> object:
     return html.Div(
         [
             dbc.Switch(
-                id=id,
+                id={'type': 'dynamic-switch', 'index': id_str},
                 # id={'type': 'dynamic-switch', 'index': id},
                 label="switch-disabled",
                 value=False,
