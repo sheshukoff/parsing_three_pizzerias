@@ -1,5 +1,5 @@
 import dash_bootstrap_components as dbc
-from dash import html, Input, Output, callback_context, ALL, callback
+from dash import html, Input, Output, callback_context, ALL, callback, State
 import dash
 from work_with_dash import data
 from components_for_dash_table import get_data_pagination, get_total_page
@@ -14,18 +14,34 @@ PAGE_SIZE = 15
 
 
 @callback(
-    Output('output-switch-active', 'children'),
-    [Input({'type': 'dynamic-switch', 'index': ALL}, 'value')]
+    Output('container-output-text', 'children'),
+    Input('submit-button', 'n_clicks'),
+    # [Input({'type': 'dynamic-disabled', 'index': ALL}, 'value')],
+    State({'type': 'dynamic-switch', 'index': ALL}, 'value')
 )
-def display(*args):
-    ctx = callback_context
-    if not ctx.triggered:
-        return 'Переключите один из переключателей'
+def choose_brand_and_cities(save_changes: int, click_switch: list):
+    if not click_switch:
+        return "Нажмите на любой переключатель"
     else:
-        switch_id = ctx.triggered[0]['prop_id'].split('.')[0]
+        # {'Додо': ['Воронеж', 'Рязань'], 'Ташир': ['Рязань']} пример того как сделать нужно
+        current_page = 1
+        ctx = callback_context
+        switch_id = ctx.triggered_id
         switch_value = ctx.triggered[0]['value']
-        print(switch_id, switch_value)
-        return f'Переключатель {switch_id} теперь {"включен" if switch_value else "выключен"}'
+        # search_brand_and_cities(data, click_switch, current_page)
+        print(data[0])
+        print(click_switch, switch_id)
+        # print(len(n_clicks))
+        return f'Нажат переключатель {click_switch}'
+
+    # ctx = callback_context
+    # if not ctx.triggered:
+    #     return 'Переключите один из переключателей'
+    # else:
+    #     switch_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    #     switch_value = ctx.triggered[0]['value']
+    #     print(switch_id, switch_value)
+    #     return f'Переключатель {switch_id} теперь {"включен" if switch_value else "выключен"}'
 
 
 @callback(
@@ -52,9 +68,17 @@ app.layout = html.Div(
             max_value=get_total_page(PAGE_SIZE, len(data)),
             fully_expanded=False,
         ),
+        html.Button('Submit', id='submit-button', n_clicks=0),
+        html.Div(id='container-output-text',
+                 children='Enter a value and press submit')
     ],
     className="table-pagination",
 )
 
 if __name__ == "__main__":
     app.run_server(debug=True)
+
+# https://dash.plotly.com/advanced-callbacks
+# https://dash.plotly.com/determining-which-callback-input-changed
+# https://dash.plotly.com/pattern-matching-callbacks
+
