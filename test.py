@@ -1,39 +1,38 @@
-import dash_bootstrap_components as dbc
-from dash import html, Input, Output
 import dash
-from work_with_dash import data
+from dash.dependencies import Input, Output
+import dash_table
+import dash_html_components as html
+import dash_core_components as dcc
+import pandas as pd
 
-table_header = [
-    html.Thead(html.Tr([html.Th("First Name"), html.Th("Last Name")]))
-]
+df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv')
+df[' index'] = range(1, len(df) + 1)
+app = dash.Dash(__name__)
+PAGE_SIZE = 15
 
-row1 = html.Tr([html.Td("Arthur"), html.Td("Dent")])
-row2 = html.Tr([html.Td("Ford"), html.Td("Prefect")])
-row3 = html.Tr([html.Td("Zaphod"), html.Td("Beeblebrox")])
-row4 = html.Tr([html.Td("Trillian"), html.Td("Astra")])
+app.layout = html.Div([
+    html.Div('Data table pagination test'),
+    dcc.Dropdown(
+        id='select_page_size',
+        options=[{'label': '5', 'value': 5}, {'label': '10', 'value': 10}, {'label': '15', 'value': 15}],
+        value=5
+    ),
+    html.Div(dash_table.DataTable(
+        id='datatable-paging',
+        columns=[{"name": i, "id": i} for i in df.columns],
+        data=df.to_dict("rows"),
+        page_size=PAGE_SIZE,
+        page_current=0,
+    ))
+])
 
-table_body = [html.Tbody([row1, row2, row3, row4])]
 
-table = dbc.Table(table_header + table_body, bordered=True)
+@app.callback(
+    Output('datatable-paging', 'page_size'),
+    [Input('select_page_size', 'value')])
+def update_graph(page_size):
+    return page_size
 
 
-app = dash.Dash(__name__, title="Checklist Test")
-
-
-app.layout = html.Div(
-    [
-        dbc.Table(
-            # using the same table as in the above example
-            table_header + table_body,
-            id="table-color",
-            color="primary",
-        ),
-    ]
-)
-
-if __name__ == "__main__":
-    # app.run_server(debug=True)
+if __name__ == '__main__':
     app.run_server(debug=True)
-
-
-
