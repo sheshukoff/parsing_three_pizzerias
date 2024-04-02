@@ -3,6 +3,7 @@ from dash import html, Input, Output, callback_context, ALL, callback, State
 import dash
 from work_with_dash import data
 from components_for_dash_table import get_data_pagination, get_total_page
+from search_brand_and_cities import split_array, sort_brand_and_city, search_brand_city
 
 app = dash.Dash(__name__,
                 title="Checklist Test",
@@ -19,20 +20,23 @@ PAGE_SIZE = 15
     # [Input({'type': 'dynamic-disabled', 'index': ALL}, 'value')],
     State({'type': 'dynamic-switch', 'index': ALL}, 'value')
 )
-def choose_brand_and_cities(save_changes: int, click_switch: list):
-    if not click_switch:
+def choose_brand_and_cities(save_changes: int, choose_user_cities: list):
+    if not choose_user_cities:
         return "Нажмите на любой переключатель"
     else:
         # {'Додо': ['Воронеж', 'Рязань'], 'Ташир': ['Рязань']} пример того как сделать нужно
         current_page = 1
-        ctx = callback_context
-        switch_id = ctx.triggered_id
-        switch_value = ctx.triggered[0]['value']
+        # ctx = callback_context
+        # switch_id = ctx.triggered_id
+        # switch_value = ctx.triggered[0]['value']
         # search_brand_and_cities(data, click_switch, current_page)
-        print(data[0])
-        print(click_switch, switch_id)
-        # print(len(n_clicks))
-        return f'Нажат переключатель {click_switch}'
+        print(choose_user_cities)
+        split_choose_user = split_array(choose_user_cities)
+        search_brand_cities = search_brand_city(split_choose_user)
+        found_brand_and_city = sort_brand_and_city(search_brand_cities)
+        print(found_brand_and_city)
+
+        return f'Нажат переключатель {choose_user_cities}'
 
     # ctx = callback_context
     # if not ctx.triggered:
