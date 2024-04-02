@@ -1,10 +1,6 @@
 from sort_cities import sorted_brand_and_cities
-
-from dash import Dash, dash_table, dcc, html, Input, Output, callback
-import dash_ag_grid as dag
-import dash_daq as daq
+from dash import Dash, dash_table, html
 from flask import Flask
-import pandas as pd
 
 
 def index():
