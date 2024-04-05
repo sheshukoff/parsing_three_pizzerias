@@ -1,6 +1,3 @@
-from work_with_dash import data
-
-
 def split_array(choose_user_cities: list) -> list[list]:
     split_choose_user = []
     index = 0
@@ -14,8 +11,7 @@ def split_array(choose_user_cities: list) -> list[list]:
     return split_choose_user
 
 
-def search_brand_city(split_choose_user):
-    part_table = data[:15]
+def search_brand_city(split_choose_user, part_table):
     search_brand_cities = {}
 
     for num, cities in enumerate(part_table):
@@ -38,13 +34,10 @@ def sort_brand_and_city(found_brand_city):
 
     for city, brands in found_brand_city.items():
         if brands['Додо'] is True:
-            print(city, 'Додо')
             found_brand_and_city['Додо'].append(city)
         if brands['Ташир'] is True:
-            print(city, 'Ташир')
             found_brand_and_city['Ташир'].append(city)
         if brands['Томато'] is True:
-            print(city, 'Томато')
             found_brand_and_city['Томато'].append(city)
 
     return found_brand_and_city
