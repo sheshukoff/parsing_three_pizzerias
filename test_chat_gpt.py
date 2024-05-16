@@ -3,7 +3,7 @@ from dash import html, Input, Output, ALL, callback, State
 import dash
 from work_with_dash import data
 from components_for_dash_table import get_data_pagination, get_total_page
-from search_brand_and_cities import split_array, sort_brand_and_city, search_brand_city
+from search_brand_and_cities import split_array, search_brand_city, sort_brand_and_city
 
 app = dash.Dash(__name__,
                 title="Checklist Test",
@@ -12,26 +12,51 @@ app = dash.Dash(__name__,
                 )
 
 PAGE_SIZE = 15
+found_brand_and_city = {'Додо': [], 'Ташир': [], 'Томато': []}  # в таком формате должно быть
 
 
 @callback(
     Output('container-output-text', 'children'),
-    Input('submit-button', 'n_clicks'),
+    # Input('submit-button', 'n_clicks'),
     Input('pagination', 'active_page'),
     State({'type': 'dynamic-switch', 'index': ALL}, 'value')
 )
-def choose_brand_and_cities(save_changes: int, number_page, choose_user_cities: list):
-    active_page = 1 if not number_page else int(number_page)
-    if not save_changes:
-        return "Нажмите на любой переключатель"
+def choose_brand_and_cities(number_page: int, choose_user_cities: list):
+    if number_page is None:
+        active_page = 1
     else:
+        active_page = int(number_page)
+
+    if not number_page:
+        print(active_page, number_page)
+        print(choose_user_cities)
+        return "Нажмите на любой переключатель"
+    elif number_page:
+        print(active_page, number_page)
         start = (active_page - 1) * PAGE_SIZE
         end = start + PAGE_SIZE
         part_table = data[start:end]
         split_choose_user = split_array(choose_user_cities)
         search_brand_cities = search_brand_city(split_choose_user, part_table)
-        found_brand_and_city = sort_brand_and_city(search_brand_cities)
 
+        for city, brands in search_brand_cities.items():
+            for city_data in data:
+                if city == city_data['city']:
+                    if brands['dodo'] is True:
+                        city_data.update({"dodo_value": True})
+                    elif brands['dodo'] is False:
+                        city_data.update({"dodo_value": False})
+                    if brands['tashir'] is True:
+                        city_data.update({"tashir_value": True})
+                    elif brands['tashir'] is False:
+                        city_data.update({"tashir_value": False})
+                    if brands['tomato'] is True:
+                        city_data.update({"tomato_value": True})
+                    elif brands['tomato'] is False:
+                        city_data.update({"tomato_value": False})
+
+
+        found_brand_and_city = sort_brand_and_city(search_brand_cities)
         return f'Нажат переключатель {found_brand_and_city}'
 
 
@@ -72,31 +97,3 @@ if __name__ == "__main__":
 # https://dash.plotly.com/advanced-callbacks
 # https://dash.plotly.com/determining-which-callback-input-changed
 # https://dash.plotly.com/pattern-matching-callbacks
-    # if not choose_user_cities:
-    #     return "Нажмите на любой переключатель"
-    # else:
-    #     active_page = 1 if not number_page else int(number_page)
-    #
-    #     start = (active_page - 1) * PAGE_SIZE
-    #     end = start + PAGE_SIZE
-    #     part_table = data[start:end]
-
-    # {'Додо': ['Воронеж', 'Рязань'], 'Ташир': ['Рязань']} пример того как сделать нужно
-    # current_page = 1
-    # ctx = callback_context
-    # save_changes = ctx.triggered_id
-    # switch_value = ctx.triggered[0]['value']
-    # search_brand_and_cities(data, click_switch, current_page)
-    # split_choose_user = split_array(choose_user_cities)
-    # search_brand_cities = search_brand_city(split_choose_user, part_table)
-    # found_brand_and_city = sort_brand_and_city(search_brand_cities)
-    # print(found_brand_and_city)
-
-    # ctx = callback_context
-    # if not ctx.triggered:
-    #     return 'Переключите один из переключателей'
-    # else:
-    #     switch_id = ctx.triggered[0]['prop_id'].split('.')[0]
-    #     switch_value = ctx.triggered[0]['value']
-    #     print(switch_id, switch_value)
-    #     return f'Переключатель {switch_id} теперь {"включен" if switch_value else "выключен"}'
