@@ -17,9 +17,8 @@ found_brand_and_city = {'Додо': [], 'Ташир': [], 'Томато': []}  #
 
 @callback(
     Output('container-output-text', 'children'),
-    # Input('submit-button', 'n_clicks'),
     Input('pagination', 'active_page'),
-    State({'type': 'dynamic-switch', 'index': ALL}, 'value')
+    State({'type': 'dynamic-switch', 'index': ALL}, 'value'),
 )
 def choose_brand_and_cities(number_page: int, choose_user_cities: list):
     if number_page is None:
@@ -33,9 +32,10 @@ def choose_brand_and_cities(number_page: int, choose_user_cities: list):
         return "Нажмите на любой переключатель"
     elif number_page:
         print(active_page, number_page)
+        print(choose_user_cities)
         start = (active_page - 1) * PAGE_SIZE
         end = start + PAGE_SIZE
-        part_table = data[start:end]
+        part_table = data[start-15:end-15]
         split_choose_user = split_array(choose_user_cities)
         search_brand_cities = search_brand_city(split_choose_user, part_table)
 
@@ -54,7 +54,6 @@ def choose_brand_and_cities(number_page: int, choose_user_cities: list):
                         city_data.update({"tomato_value": True})
                     elif brands['tomato'] is False:
                         city_data.update({"tomato_value": False})
-
 
         found_brand_and_city = sort_brand_and_city(search_brand_cities)
         return f'Нажат переключатель {found_brand_and_city}'
