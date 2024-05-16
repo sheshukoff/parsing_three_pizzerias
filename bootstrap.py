@@ -1,35 +1,33 @@
-# Import packages
-from dash import Dash, dcc, Input, Output, callback
+import dash
+from dash import html
+from dash import dcc
+from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 
-# Initialise the App
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-# App Layout
-app.layout = dbc.Container(
-    [
-        dbc.Row([
-            dbc.Col([
-                dbc.Switch(
-                    value=False,
-                    id='restricted_search',
-                    inputClassName=None
-                ),
-            ], width=6)])
-    ]
+app.layout = html.Div([
+    dbc.Checklist(
+        id='toggle-switch',
+        options=[
+            {'label': 'Toggle', 'value': 'toggle'}
+        ],
+        value=[]
+    ),
+    html.Div(id='toggle-switch-output')
+])
+
+
+@app.callback(
+    Output('toggle-switch-output', 'children'),
+    [Input('toggle-switch', 'value')]
 )
+def update_output(value):
+    if 'toggle' in value:
+        return "Switch is turned on"
+    else:
+        return "Switch is turned off"
 
 
-@callback(
-    Output('restricted_search', 'inputClassName'),
-    Input('restricted_search', 'value')
-)
-def update_switch(activated):
-    if activated:
-        return 'bg-success',
-    return None
-
-
-# Run the App
 if __name__ == '__main__':
-    app.run_server()
+    app.run_server(port=8050)
