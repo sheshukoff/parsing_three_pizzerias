@@ -2,7 +2,7 @@ import dash_bootstrap_components as dbc
 from dash import html
 
 
-def check_toggle_switch(type_boolean: bool, id_str: str) -> object:
+def check_toggle_switch(type_boolean: bool, id_str: str, value: bool) -> object:
     if type_boolean is True:
         return html.Div(
             [
@@ -10,7 +10,7 @@ def check_toggle_switch(type_boolean: bool, id_str: str) -> object:
                     id={'type': 'dynamic-switch', 'index': id_str},
                     # id=id,
                     label="switch-active",
-                    value=False,
+                    value=value,
                 ), html.Div(id='output-switch-active')
             ],
             className='toggle_switch_active',
@@ -21,7 +21,7 @@ def check_toggle_switch(type_boolean: bool, id_str: str) -> object:
                 id={'type': 'dynamic-switch', 'index': id_str},
                 # id={'type': 'dynamic-switch', 'index': id},
                 label="switch-disabled",
-                value=False,
+                value=value,
                 disabled=True,
             ), html.Div(id='output-switch-disabled')
         ],
@@ -55,9 +55,9 @@ def get_data_pagination(part_table) -> object:
         table_row = html.Tr(
             [
                 html.Td(row['city'], id="city-cell"),
-                html.Td(check_toggle_switch(row['dodo'], f'{id}-0'), id="dodo-cell"),
-                html.Td(check_toggle_switch(row['tashir'], f'{id}-1'), id="tashir-cell"),
-                html.Td(check_toggle_switch(row['tomato'], f'{id}-2'), id="tomato-cell"),
+                html.Td(check_toggle_switch(row['dodo'], f'{id}-0', row['dodo_value']), id="dodo-cell"),
+                html.Td(check_toggle_switch(row['tashir'], f'{id}-1', row['tashir_value']), id="tashir-cell"),
+                html.Td(check_toggle_switch(row['tomato'], f'{id}-2', row['tomato_value']), id="tomato-cell"),
             ]
         )
         table_rows.append(table_row)
