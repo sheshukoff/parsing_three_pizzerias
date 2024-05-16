@@ -11,33 +11,31 @@ def split_array(choose_user_cities: list) -> list[list]:
     return split_choose_user
 
 
-def search_brand_city(split_choose_user, part_table):
+def search_brand_city(split_choose_user, table):  # здесь состояние переключателя
     search_brand_cities = {}
-
-    for num, cities in enumerate(part_table):
+    for num, cities in enumerate(table):
         temp = {}
         for number in range(0, 3):
             if number == 0:
-                temp['Додо'] = split_choose_user[num][number]
+                temp['dodo'] = split_choose_user[num][number]
             elif number == 1:
-                temp['Ташир'] = split_choose_user[num][number]
+                temp['tashir'] = split_choose_user[num][number]
             elif number == 2:
-                temp['Томато'] = split_choose_user[num][number]
-
+                temp['tomato'] = split_choose_user[num][number]
         search_brand_cities[cities['city']] = temp
 
     return search_brand_cities
 
 
 def sort_brand_and_city(found_brand_city):
-    found_brand_and_city = {'Додо': [], 'Ташир': [], 'Томато': []}
+    found_brand_and_city = {'dodo': [], 'tashir': [], 'tomato': []}
 
     for city, brands in found_brand_city.items():
-        if brands['Додо'] is True:
-            found_brand_and_city['Додо'].append(city)
-        if brands['Ташир'] is True:
-            found_brand_and_city['Ташир'].append(city)
-        if brands['Томато'] is True:
-            found_brand_and_city['Томато'].append(city)
+        if brands['dodo'] is True:
+            found_brand_and_city['dodo'].append(city)
+        if brands['tashir'] is True:
+            found_brand_and_city['tashir'].append(city)
+        if brands['tomato'] is True:
+            found_brand_and_city['tomato'].append(city)
 
     return found_brand_and_city
