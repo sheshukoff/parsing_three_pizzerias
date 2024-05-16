@@ -42,7 +42,15 @@ for city, brands in data_frame.items():
     dodo, tashir, tomato = brands
     # print(dodo, tashir, tomato)
 
-    data.append({'city': city, 'dodo': dodo, 'tashir': tashir, 'tomato': tomato}, )
+    data.append({
+        'city': city,
+        'dodo': dodo,
+        'dodo_value': False,
+        'tashir': tashir,
+        'tashir_value': False,
+        'tomato': tomato,
+        'tomato_value': False
+    },)
 
 # определяем столбцы для таблицы в виде списка словарей
 columns = [
