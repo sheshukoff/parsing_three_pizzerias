@@ -12,7 +12,8 @@ app = dash.Dash(__name__,
                 )
 
 PAGE_SIZE = 15
-found_brand_and_city = {'Додо': [], 'Ташир': [], 'Томато': []}  # в таком формате должно быть
+previous_page = 1
+found_brand_and_city = {'dodo': [], 'tashir': [], 'tomato': []}  # в таком формате должно быть
 
 
 @callback(
@@ -21,6 +22,8 @@ found_brand_and_city = {'Додо': [], 'Ташир': [], 'Томато': []}  #
     State({'type': 'dynamic-switch', 'index': ALL}, 'value'),
 )
 def choose_brand_and_cities(number_page: int, choose_user_cities: list):
+    global previous_page
+
     if number_page is None:
         active_page = 1
     else:
@@ -35,11 +38,17 @@ def choose_brand_and_cities(number_page: int, choose_user_cities: list):
         print(choose_user_cities)
         start = (active_page - 1) * PAGE_SIZE
         end = start + PAGE_SIZE
-        part_table = data[start-15:end-15]
-        split_choose_user = split_array(choose_user_cities)
-        search_brand_cities = search_brand_city(split_choose_user, part_table)
+        part_table = data[start:end]
 
-        for city, brands in search_brand_cities.items():
+        start = (previous_page - 1) * PAGE_SIZE
+        end = start + PAGE_SIZE
+        previous_part_table = data[start:end]
+
+        split_choose_user = split_array(choose_user_cities)
+        choose_brand_cities = search_brand_city(split_choose_user, previous_part_table)
+        # я беру split_choose_user и вношу изменения в data, город я беру из previous_part_table и меняю _value
+        # TODO сделать для превой страницы и последней страницы что бы были изменения переключателей
+        for city, brands in choose_brand_cities.items():
             for city_data in data:
                 if city == city_data['city']:
                     if brands['dodo'] is True:
@@ -55,7 +64,9 @@ def choose_brand_and_cities(number_page: int, choose_user_cities: list):
                     elif brands['tomato'] is False:
                         city_data.update({"tomato_value": False})
 
-        found_brand_and_city = sort_brand_and_city(search_brand_cities)
+        found_brand_and_city = sort_brand_and_city(choose_brand_cities)
+
+        previous_page = number_page
         return f'Нажат переключатель {found_brand_and_city}'
 
 
@@ -91,7 +102,7 @@ app.layout = html.Div(
 )
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server()
 
 # https://dash.plotly.com/advanced-callbacks
 # https://dash.plotly.com/determining-which-callback-input-changed
