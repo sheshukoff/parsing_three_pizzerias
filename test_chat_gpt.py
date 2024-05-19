@@ -3,7 +3,7 @@ from dash import html, Input, Output, ALL, callback, State
 import dash
 from work_with_dash import data
 from components_for_dash_table import get_data_pagination, get_total_page
-from search_brand_and_cities import split_array, search_brand_city, sort_brand_and_city
+from search_brand_and_cities import split_array, search_brand_city, sort_brand_and_city, changes_in_data
 
 app = dash.Dash(__name__,
                 title="Checklist Test",
@@ -13,7 +13,7 @@ app = dash.Dash(__name__,
 
 PAGE_SIZE = 15
 previous_page = 1
-found_brand_and_city = {'dodo': [], 'tashir': [], 'tomato': []}  # в таком формате должно быть
+cities_for_parsing = {'dodo': [], 'tashir': [], 'tomato': []}  # в таком формате должно быть
 
 
 @callback(
@@ -46,25 +46,10 @@ def choose_brand_and_cities(number_page: int, choose_user_cities: list):
 
         split_choose_user = split_array(choose_user_cities)
         choose_brand_cities = search_brand_city(split_choose_user, previous_part_table)
-        # я беру split_choose_user и вношу изменения в data, город я беру из previous_part_table и меняю _value
-        # TODO сделать для превой страницы и последней страницы что бы были изменения переключателей
-        for city, brands in choose_brand_cities.items():
-            for city_data in data:
-                if city == city_data['city']:
-                    if brands['dodo'] is True:
-                        city_data.update({"dodo_value": True})
-                    elif brands['dodo'] is False:
-                        city_data.update({"dodo_value": False})
-                    if brands['tashir'] is True:
-                        city_data.update({"tashir_value": True})
-                    elif brands['tashir'] is False:
-                        city_data.update({"tashir_value": False})
-                    if brands['tomato'] is True:
-                        city_data.update({"tomato_value": True})
-                    elif brands['tomato'] is False:
-                        city_data.update({"tomato_value": False})
-
         found_brand_and_city = sort_brand_and_city(choose_brand_cities)
+        print(found_brand_and_city)
+
+        changes_in_data(found_brand_and_city, data)
 
         previous_page = number_page
         return f'Нажат переключатель {found_brand_and_city}'
@@ -102,8 +87,48 @@ app.layout = html.Div(
 )
 
 if __name__ == "__main__":
-    app.run_server()
+    app.run_server(debug=True)
 
 # https://dash.plotly.com/advanced-callbacks
 # https://dash.plotly.com/determining-which-callback-input-changed
 # https://dash.plotly.com/pattern-matching-callbacks
+
+
+# я беру split_choose_user и вношу изменения в data, город я беру из previous_part_table и меняю _value
+# TODO сделать для превой страницы и последней страницы что бы были изменения переключателей
+# for num, cities in enumerate(split_choose_user):
+#     print(previous_part_table[num]['city'], num, cities)
+# for number in range(0, 3):
+#     if number == 0:
+#         for city_brands in data:
+#             if city_brands['city'] == previous_part_table[num]['city']:
+#                 city_brands['dodo_value'] = True
+#     elif number == 1:
+#         for city_brands in data:
+#             if city_brands['city'] == previous_part_table[num]['city']:
+#                 city_brands['tashir_value'] = True
+#     elif number == 2:
+#         for city_brands in data:
+#             if city_brands['city'] == previous_part_table[num]['city']:
+#                 city_brands['tomato_value'] = True
+
+# for element in data[0:30]:
+#     print(element)
+
+# for city, brands in choose_brand_cities.items():
+#     for city_data in data:
+#         if city == city_data['city']:
+#             if brands['dodo'] is True:
+#                 city_data.update({"dodo_value": True})
+#             elif brands['dodo'] is False:
+#                 city_data.update({"dodo_value": False})
+#             if brands['tashir'] is True:
+#                 city_data.update({"tashir_value": True})
+#             elif brands['tashir'] is False:
+#                 city_data.update({"tashir_value": False})
+#             if brands['tomato'] is True:
+#                 city_data.update({"tomato_value": True})
+#             elif brands['tomato'] is False:
+#                 city_data.update({"tomato_value": False})
+
+# found_brand_and_city = sort_brand_and_city(choose_brand_cities)
