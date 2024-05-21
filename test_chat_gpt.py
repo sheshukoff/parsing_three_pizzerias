@@ -30,12 +30,8 @@ def choose_brand_and_cities(number_page: int, choose_user_cities: list):
         active_page = int(number_page)
 
     if not number_page:
-        print(active_page, number_page)
-        print(choose_user_cities)
         return "Нажмите на любой переключатель"
     elif number_page:
-        print(active_page, number_page)
-        print(choose_user_cities)
         start = (active_page - 1) * PAGE_SIZE
         end = start + PAGE_SIZE
         part_table = data[start:end]
@@ -44,12 +40,13 @@ def choose_brand_and_cities(number_page: int, choose_user_cities: list):
         end = start + PAGE_SIZE
         previous_part_table = data[start:end]
 
-        split_choose_user = split_array(choose_user_cities)
-        choose_brand_cities = search_brand_city(split_choose_user, previous_part_table)
-        found_brand_and_city = sort_brand_and_city(choose_brand_cities)
-        print(found_brand_and_city)
+        split_choose_user = split_array(choose_user_cities)  # разбито на три
 
-        changes_in_data(found_brand_and_city, data)
+        for number, values in enumerate(split_choose_user):
+            dodo_value, tashir_value, tomato_value = values
+            data[start+number]['dodo_value'] = dodo_value
+            data[start+number]['tashir_value'] = tashir_value
+            data[start+number]['tomato_value'] = tomato_value
 
         previous_page = number_page
         return f'Нажат переключатель'
