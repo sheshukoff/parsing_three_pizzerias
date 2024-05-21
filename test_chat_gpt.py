@@ -52,7 +52,7 @@ def choose_brand_and_cities(number_page: int, choose_user_cities: list):
         changes_in_data(found_brand_and_city, data)
 
         previous_page = number_page
-        return f'Нажат переключатель {found_brand_and_city}'
+        return f'Нажат переключатель'
 
 
 @callback(
