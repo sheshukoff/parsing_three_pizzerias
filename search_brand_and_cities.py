@@ -28,15 +28,28 @@ def search_brand_city(split_choose_user, table):  # здесь состояни�
 
 
 def sort_brand_and_city(found_brand_city):
-    found_brand_and_city = {'dodo': [], 'tashir': [], 'tomato': []}
+    found_brand_and_city = {
+        'dodo_true': [],
+        'tashir_true': [],
+        'tomato_true': [],
+        'dodo_false': [],
+        'tashir_false': [],
+        'tomato_false': [],
+    }
 
     for city, brands in found_brand_city.items():
         if brands['dodo_value'] is True:
-            found_brand_and_city['dodo'].append(city)
+            found_brand_and_city['dodo_true'].append(city)
+        else:
+            found_brand_and_city['dodo_false'].append(city)
         if brands['tashir_value'] is True:
-            found_brand_and_city['tashir'].append(city)
+            found_brand_and_city['tashir_true'].append(city)
+        else:
+            found_brand_and_city['tashir_false'].append(city)
         if brands['tomato_value'] is True:
-            found_brand_and_city['tomato'].append(city)
+            found_brand_and_city['tomato_true'].append(city)
+        else:
+            found_brand_and_city['tomato_false'].append(city)
 
     return found_brand_and_city
 
@@ -46,32 +59,50 @@ def changes_in_data(found_brand_and_city, data):
     print(data[:30])
 
     for cities in data:
-        city_dodo = found_brand_and_city['dodo']
-        city_tashir = found_brand_and_city['tashir']
-        city_tomato = found_brand_and_city['tomato']
-        if len(city_dodo) != 0:
-            for city in city_dodo:
+        if len(found_brand_and_city['dodo_true']) != 0:
+            for city in found_brand_and_city['dodo_true']:
                 if cities['city'] == city:
                     cities['dodo_value'] = True
-        elif len(city_dodo) == 0:
-            print(f'Список {city_dodo} пустой')
 
-        if len(city_tashir) != 0:
-            for city in city_tashir:
+        elif len(found_brand_and_city['dodo_true']) == 0:
+            print(f'Список {found_brand_and_city['dodo_true']} пустой')
+
+        if len(found_brand_and_city['dodo_false']) != 0:
+            for city in found_brand_and_city['dodo_false']:
+                if cities['city'] == city:
+                    cities['dodo_value'] = False
+
+        elif len(found_brand_and_city['dodo_false']) == 0:
+            print(f'Список {found_brand_and_city['dodo_false']} пустой')
+
+        if len(found_brand_and_city['tashir_true']) != 0:
+            for city in found_brand_and_city['tashir_true']:
                 if cities['city'] == city:
                     cities['tashir_value'] = True
-        elif len(city_tashir) == 0:
-            print(f'Список {city_tashir} пустой')
 
-        if len(city_tomato) != 0:
-            for city in city_tashir:
+        elif len(found_brand_and_city['tashir_true']) == 0:
+            print(f'Список {found_brand_and_city['tashir_true']} пустой')
+
+        if len(found_brand_and_city['tashir_false']) != 0:
+            for city in found_brand_and_city['tashir_false']:
+                if cities['city'] == city:
+                    cities['tashir_value'] = False
+
+        elif len(found_brand_and_city['tashir_false']) == 0:
+            print(f'Список {found_brand_and_city['tashir_false']} пустой')
+
+        if len(found_brand_and_city['tomato_true']) != 0:
+            for city in found_brand_and_city['tomato_true']:
                 if cities['city'] == city:
                     cities['tomato_value'] = True
-        elif len(city_tomato) == 0:
-            print(f'Список {city_tomato} пустой')
 
-    print(f'Изменения в {data} внесены')
+        elif len(found_brand_and_city['tomato_true']) == 0:
+            print(f'Список {found_brand_and_city['tomato_true']} пустой')
 
+        if len(found_brand_and_city['tomato_false']) != 0:
+            for city in found_brand_and_city['tomato_false']:
+                if cities['city'] == city:
+                    cities['tomato_value'] = False
 
-
-
+        elif len(found_brand_and_city['tomato_false']) == 0:
+            print(f'Список {found_brand_and_city['tomato_false']} пустой')
