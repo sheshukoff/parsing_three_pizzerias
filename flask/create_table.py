@@ -24,7 +24,6 @@ HOST = config.get("HOST")
 PORT = config.get("PORT")
 DATABASE = config.get("DATABASE")
 
-
 # Создаем подключение к базе данных PostgreSQL
 engine = create_engine(f"postgresql://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}")
 
