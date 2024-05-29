@@ -117,3 +117,15 @@ input:checked + label:after {
 label:active:after {
   width: 20px;
 }
+
+
+/* кнопка "Отрпавить на парсинг" */
+#submit-button {
+    font-family: Lobster;
+    position: relative;
+    color: #fff;
+    background-color: #212529;
+    border-color: #212529;
+    left: 867px;
+    top: -10px;
+}
