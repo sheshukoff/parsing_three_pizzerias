@@ -102,27 +102,28 @@ def log_out():
 
 @login_required
 def dashboard():
-    print("105 строка")
-    if request.method == "GET":
-        print("GET")
-        login = request.args["login"]
-    elif request.method == "POST":
-        print("POST")
-        button = request.form.get("submit-button")
-        print("110 строка", button)
-    else:
-        print("another_method")
-    return render_template(dash_app)
+    pass
+    # print("105 строка")
+    # if request.method == "GET":
+    #     print("GET")
+    #     login = request.args["login"]
+    # elif request.method == "POST":
+    #     print("POST")
+    #     button = request.form.get("submit-button")
+    #     print("110 строка", button)
+    # else:
+    #     print("another_method")
+    # return render_template(dash_app)
 
 
-@login_required
-def output_parsing_information():
-    if request.method == "GET":
-        print("GET")
-    elif request.method == "POST":
-        print("POST")
-    else:
-        print("another_method")
+# @login_required
+# def output_parsing_information():
+#     if request.method == "GET":
+#         print("GET")
+#     elif request.method == "POST":
+#         print("POST")
+#     else:
+#         print("another_method")
 
 
 def page3():
@@ -185,6 +186,7 @@ if __name__ == "__main__":
 # перенести функции относящиеся к классу юзер и переписать код
 # сделать страницы только авторизованным пользователем
 # @login_required -> декоратор позволяет находится только авторизованным пользователям
+# можно ли убрать функцию dashboard
 
 # def test_choose_city():
 #     if request.method == 'GET':
