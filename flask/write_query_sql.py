@@ -1,4 +1,5 @@
 from create_table import Authorized_users, session, engine
+from sqlalchemy import insert
 
 
 def load_table_authorized_users(login: str, hash_password: str):
@@ -31,7 +32,7 @@ def recieve_user_login(input_login: str):
     return user_login
 
 
-def search_password(input_login: str) -> str:
+def search_password(input_login: str) -> None | str:
     """
     Функция ищет пользователя по логину и возращает хешированный пароль
     :param input_login: str
