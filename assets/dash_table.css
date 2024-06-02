@@ -129,3 +129,10 @@ label:active:after {
     left: 867px;
     top: -10px;
 }
+
+/* Вывод информации "Вы не выбрали и одного города" */
+#container-output-text{
+    position: relative;
+    left: 10px;
+    top: -120px;
+}
