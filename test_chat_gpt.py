@@ -2,8 +2,7 @@ import dash_bootstrap_components as dbc
 from dash import html, Input, Output, ALL, callback, State, dcc
 import dash
 from work_with_dash import data
-from components_for_dash_table import get_data_pagination, get_total_page
-from search_brand_and_cities import split_array
+from components_for_dash_table import get_data_pagination, get_total_page, split_array
 
 dash_app = dash.Dash(__name__,
                      title="Checklist Test",
@@ -17,13 +16,13 @@ previous_page = 1
 cities_for_parsing = {'dodo': [], 'tashir': [], 'tomato': []}  # в таком формате должно быть
 
 
+# button: None | int,
 @callback(
     Output('container-output-text', 'children'),
     Input('pagination', 'active_page'),
-    Input('submit-button', 'n_clicks'),
     State({'type': 'dynamic-switch', 'index': ALL}, 'value'),
 )
-def choose_brand_and_cities(number_page: int, button: None | int, choose_user_cities: list):
+def choose_brand_and_cities(number_page: int, choose_user_cities: list):
     global previous_page
 
     if number_page is None:
@@ -41,7 +40,7 @@ def choose_brand_and_cities(number_page: int, button: None | int, choose_user_ci
 
     previous_page = number_page
 
-    return f''
+    return ''
 
 
 @callback(
@@ -60,15 +59,22 @@ def table_pagination(number_page: int) -> object:
     return table
 
 
-@dash_app.callback(
+@callback(
     Output('redirect', 'pathname'),
-    [Input('submit-button', 'n_clicks')],
-    [Input('button-clicks', 'data')]
+    Input('submit-button', 'n_clicks'),
 )
-def handle_next(n_clicks, button_clicks):
-    if n_clicks > button_clicks:
-        print("Далее")  # Выводим сообщение в консоль
-        return '/page3'  # Перенаправляем на страницу 3
+def handle_next(button):
+    if button:
+        dodo_values = [city['dodo_value'] for city in data]
+        tashir_values = [city['tashir_value'] for city in data]
+        tomato_values = [city['tomato_value'] for city in data]
+        all_switches = dodo_values + tashir_values + tomato_values
+
+        if True not in all_switches:
+            return '/dashboard/'
+        elif True in all_switches:
+            print("Далее на другую страницу '/page3'")  # Выводим сообщение в консоль
+            return '/page3'  # Перенаправляем на страницу 3
     return dash.no_update
 
 
@@ -82,7 +88,8 @@ dash_app.layout = html.Div(
             fully_expanded=False,
         ),
         html.Button('Отправить на парсинг', id='submit-button', className='btn btn-primary', n_clicks=0),
-        dcc.Location(id='redirect', refresh=True)
+        dcc.Location(id='redirect', refresh=True),
+        html.Div(id='container-output-text', children='Enter a value and press submit'),
     ],
     className="table-pagination",
 )
