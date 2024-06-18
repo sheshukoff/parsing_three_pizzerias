@@ -15,8 +15,12 @@ def split_array(choose_user_cities: list) -> list[list]:
     return split_choose_user
 
 
+# cities_for_parsing = {'dodo': [], 'tashir': [], 'tomato': []}  # в таком формате должно быть
 def check_data(data):
-    pass
+    dodo_values = [city['city'] for city in data if city['dodo_value'] is True]
+    tashir_values = [city['city'] for city in data if city['tashir_value'] is True]
+    tomato_values = [city['city'] for city in data if city['tomato_value'] is True]
+    print(dodo_values, tashir_values, tomato_values)
 
 
 def check_toggle_switch(type_boolean: bool, id_str: str, value: bool) -> object:
