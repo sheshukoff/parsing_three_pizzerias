@@ -1,99 +1,50 @@
-import dash_bootstrap_components as dbc
-from dash import html, Input, Output, State, dcc
 import dash
-from work_with_dash import data
+import dash_auth
+import dash_core_components as dcc
+import dash_html_components as html
 
-app = dash.Dash(__name__, title="Checklist Test", external_stylesheets=[dbc.themes.SLATE])
 
-# ... [Оставь существующий код без изменений до этого момента] ...
+# Keep this out of source code repository - save in a file or a database
+VALID_USERNAME_PASSWORD_PAIRS = {
+    'hello': 'world'
+}
 
-# Предположим, что у тебя есть переменная 'data' с данными для таблицы
-# и переменная 'PAGE_SIZE' с размером страницы.
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-toggle_switch_active = html.Div(
-    [
-        dbc.Switch(
-            id="active-switches-input",
-            value=False,
-        ),
-    ],
-    className='toggle_switch_active',
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+dash_auth = auth.BasicAuth(
+    app,
+    VALID_USERNAME_PASSWORD_PAIRS
 )
 
-toggle_switch_disabled = html.Div(
-    [
-        dbc.Switch(
-            id="disabled-switches-input",
-            value=False,
-            disabled=True,
-        ),
-    ],
-    className='toggle_switch_disabled',
-)
-
-
-def check_toggle_switch(type_boolean: bool):
-    if type_boolean is True:
-        return toggle_switch_active
-    return toggle_switch_disabled
-
-
-active_page = 1
-PAGE_SIZE = 15
-rows = []
-header = [
-    html.Thead(html.Tr([html.Th("Города"), html.Th("Додо"), html.Th("Ташир"), html.Th("Томато")]))
-]
-
-start = (active_page - 1) * PAGE_SIZE
-end = start + PAGE_SIZE
-
-for row in data[start:end]:
-    row = html.Thead([html.Td(row['city']),
-                      html.Td(check_toggle_switch(row['dodo'])),
-                      html.Th(check_toggle_switch(row['tashir'])),
-                      html.Th(check_toggle_switch(row['tomato']))
-                      ])
-    rows.append(row)
-
-table = header + rows
-
-app.layout = html.Div(
-    children=[
-        dbc.Table(
-            # ... [Таблица, как раньше] ...
-            table,
-            id="table-paginated",
-            bordered=True,
-            color="primary",
-        ),
-        dbc.Pagination(
-            id="pagination",
-            max_value=len(data) // PAGE_SIZE + (1 if len(data) % PAGE_SIZE else 0),
-            active_page=1,
-            first_last=True,
-        ),
-    ]
-)
+app.layout = html.Div([
+    html.H1('Welcome to the app'),
+    html.H3('You are successfully authorized'),
+    dcc.Dropdown(
+        id='dropdown',
+        options=[{'label': i, 'value': i} for i in ['A', 'B']],
+        value='A'
+    ),
+    dcc.Graph(id='graph')
+], className='container')
 
 
 @app.callback(
-    Output("table-paginated", "children"),
-    Input("pagination", "active_page"),
-)
-def update_table(active_page):
-    start = (active_page - 1) * PAGE_SIZE
-    end = start + PAGE_SIZE
-    rows = []
-    for row in data[start:end]:
-        row = [row['city'],
-               check_toggle_switch(row['dodo']),
-               check_toggle_switch(row['tashir']),
-               check_toggle_switch(row['tomato'])]
-        rows.append(html.Tr([html.Td(cell) for cell in row]))
-    return rows
+    dash.dependencies.Output('graph', 'figure'),
+    [dash.dependencies.Input('dropdown', 'value')])
+def update_graph(dropdown_value):
+    return {
+        'layout': {
+            'title': 'Graph of {}'.format(dropdown_value),
+            'margin': {
+                'l': 20,
+                'b': 20,
+                'r': 10,
+                't': 60
+            }
+        },
+        'data': [{'x': [1, 2, 3], 'y': [4, 1, 2]}]
+    }
 
-
-# ... [Оставь остальную часть кода без изменений] ...
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run_server(debug=True)
