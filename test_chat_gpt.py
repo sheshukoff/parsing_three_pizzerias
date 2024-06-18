@@ -2,7 +2,7 @@ import dash_bootstrap_components as dbc
 from dash import html, Input, Output, ALL, callback, State, dcc
 import dash
 from work_with_dash import data
-from components_for_dash_table import get_data_pagination, get_total_page, split_array
+from components_for_dash_table import get_data_pagination, get_total_page, split_array, check_data
 
 dash_app = dash.Dash(__name__,
                      title="Checklist Test",
@@ -13,10 +13,8 @@ dash_app = dash.Dash(__name__,
 
 PAGE_SIZE = 15
 previous_page = 1
-cities_for_parsing = {'dodo': [], 'tashir': [], 'tomato': []}  # в таком формате должно быть
 
 
-# button: None | int,
 @callback(
     Output('container-output-text', 'children'),
     Input('pagination', 'active_page'),
@@ -62,32 +60,38 @@ def table_pagination(number_page: int) -> object:
 @callback(
     Output('redirect', 'pathname'),
     Input('submit-button', 'n_clicks'),
+    State({'type': 'dynamic-switch', 'index': ALL}, 'value'),
 )
-def handle_next(button):
+def handle_next(button, choose_user_cities):
+    global previous_page
+
     if button:
+        choose_brand_and_cities(previous_page, choose_user_cities)
+
         dodo_values = [city['dodo_value'] for city in data]
         tashir_values = [city['tashir_value'] for city in data]
         tomato_values = [city['tomato_value'] for city in data]
         all_switches = dodo_values + tashir_values + tomato_values
 
+        check_data(data)
+
         if True not in all_switches:
             return '/dashboard/'
-        elif True in all_switches:
-            print("Далее на другую страницу '/page3'")  # Выводим сообщение в консоль
-            return '/page3'  # Перенаправляем на страницу 3
     return dash.no_update
 
 
 dash_app.layout = html.Div(
     children=[
-        dcc.Store(id='button-clicks', data=0),
         dbc.Table(id="table"),
         dbc.Pagination(
             id="pagination",
             max_value=get_total_page(PAGE_SIZE, len(data)),
             fully_expanded=False,
         ),
-        html.Button('Отправить на парсинг', id='submit-button', className='btn btn-primary', n_clicks=0),
+        html.A(html.Button(
+            'Отправить на парсинг', id='submit-button', className='btn btn-primary', n_clicks=0),
+            href='/output_info_for_user'
+        ),
         dcc.Location(id='redirect', refresh=True),
         html.Div(id='container-output-text', children='Enter a value and press submit'),
     ],
