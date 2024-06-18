@@ -7,14 +7,14 @@ from werkzeug.serving import run_simple
 from create_table import session, Authorized_users
 from write_query_sql import search_password, recieve_user_login, load_table_authorized_users
 from test_chat_gpt import dash_app
+from output_info_for_user import dash_app_output
 
-
-app = Flask(__name__)
-app.secret_key = "some secret petelka_458"
-bcrypt = Bcrypt(app)
+flask_app = Flask(__name__)
+flask_app.secret_key = "some secret petelka_458"
+bcrypt = Bcrypt(flask_app)
 
 login_manager = LoginManager()
-login_manager.init_app(app)
+login_manager.init_app(flask_app)
 
 
 @login_manager.user_loader
@@ -103,84 +103,34 @@ def log_out():
 @login_required
 def dashboard():
     pass
-    # print("105 строка")
-    # if request.method == "GET":
-    #     print("GET")
-    #     login = request.args["login"]
-    # elif request.method == "POST":
-    #     print("POST")
-    #     button = request.form.get("submit-button")
-    #     print("110 строка", button)
-    # else:
-    #     print("another_method")
-    # return render_template(dash_app)
 
 
-# @login_required
-# def output_parsing_information():
-#     if request.method == "GET":
-#         print("GET")
-#     elif request.method == "POST":
-#         print("POST")
-#     else:
-#         print("another_method")
+@login_required
+def output_info_for_user():
+    pass
 
 
-def page3():
-    return '<h1>Страница 3</h1>'
+flask_app.add_url_rule("/", "index_page", index_page, methods=["GET", "POST"])
+flask_app.add_url_rule("/sign_in", "sign_in", sign_in, methods=["GET", "POST"])
+flask_app.add_url_rule("/sign_up", "sign_up", sign_up, methods=["GET", "POST"])
+flask_app.add_url_rule("/dashboard/", "dashboard", dashboard, methods=["GET", "POST"])
+flask_app.add_url_rule(
+    "/output_info_for_user/", "output_info_for_user", output_info_for_user, methods=["GET", "POST"]
+)
 
+flask_app.add_url_rule("/" "log_out", log_out, methods=["GET", "POST"])
 
-# @login_required
-# def choose_brand_and_cities():
-#     if request.method == "GET":
-#         print("GET")
-#         login = request.args["login"]
-#     elif request.method == "POST":
-#         print("POST")
-#
-#         return redirect(url_for("choose_city"))
-#     else:
-#         print("another_method")
-#
-#     content = {"login": login}
-#
-#     return render_template("choose_brand.html", content=content)
-
-
-# @login_required
-# def choose_city():
-#     if request.method == "GET":
-#         print("GET")
-#     elif request.method == "POST":
-#         print("POST")
-#     else:
-#         print("another_method")
-#
-#     cities = recieve_cities()
-#
-#     content = {
-#         "cities": cities,
-#     }
-#
-#     return render_template("choose_city.html", content=content)
-
-
-app.add_url_rule("/", "index_page", index_page, methods=["GET", "POST"])
-app.add_url_rule("/sign_in", "sign_in", sign_in, methods=["GET", "POST"])
-app.add_url_rule("/sign_up", "sign_up", sign_up, methods=["GET", "POST"])
-app.add_url_rule("/dashboard/", "dashboard", dashboard, methods=["GET", "POST"])
-app.add_url_rule("/page3", "page3", page3, methods=["GET", "POST"])
-
-app.add_url_rule("/" "log_out", log_out, methods=["GET", "POST"])
-
-
-application = DispatcherMiddleware(
-    app,
-    {"/dashboard": dash_app.server},
+dispatcher_application = DispatcherMiddleware(
+    flask_app,
+    {
+        "/dashboard": dash_app.server,
+        "/output_info_for_user": dash_app_output.server
+    },
 )
 
 if __name__ == "__main__":
-    run_simple("localhost", 5000, application)
+    # flask_app.run(debug=True)
+    run_simple("localhost", 5000, application=dispatcher_application)
 
 # проверить как сейчас работает парсинг
 # перенести функции относящиеся к классу юзер и переписать код
