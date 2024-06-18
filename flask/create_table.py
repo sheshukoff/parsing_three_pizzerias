@@ -16,7 +16,7 @@ class Authorized_users(UserMixin, Base):
     password = Column(String(60), nullable=False)
 
 
-config = dotenv_values("..\.env")
+config = dotenv_values(".env")
 
 USERNAME = config.get("USERNAME")
 PASSWORD = config.get("PASSWORD")
