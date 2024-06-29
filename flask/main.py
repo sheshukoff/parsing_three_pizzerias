@@ -3,6 +3,7 @@ from flask_login import login_required, LoginManager, login_user, logout_user
 from flask_bcrypt import Bcrypt
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from werkzeug.serving import run_simple
+import flask
 
 from create_table import session, Authorized_users
 from write_query_sql import search_password, recieve_user_login, load_table_authorized_users
@@ -102,7 +103,20 @@ def log_out():
 
 @login_required
 def dashboard():
-    pass
+    data = flask.request.form
+    row = dict(data)
+    column = row['name']
+    print(column, '109')
+    if column:
+        return flask.redirect('/output_info_for_user/')
+    # if flask.request.form == "GET":
+    #     print("106 GET")
+    # elif flask.request.form == "POST":
+    #     print('108 POST')
+    #     print(column)
+    # else:
+    #     print("another_method")
+    # return redirect(url_for('output_info_for_user'))
 
 
 @login_required
@@ -124,7 +138,7 @@ dispatcher_application = DispatcherMiddleware(
     flask_app,
     {
         "/dashboard": dash_app.server,
-        "/output_info_for_user": dash_app_output.server
+        "/output_info_for_user": dash_app_output.server,
     },
 )
 
