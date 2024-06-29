@@ -1,52 +1,38 @@
+import flask
 import dash
-from dash.dependencies import Input, Output, State
 from dash import dcc
 from dash import html
-from output_info_for_user import page_output_info
 
-# CREDIT: This code is copied from Dash official documentation:
-# https://dash.plotly.com/urls
+app = dash.Dash(__name__)
+app.secret_key = "some secret petelka_458"
 
-# Since we're adding callbacks to elements that don't exist in the app.layout,
-# Dash will raise an exception to warn us that we might be
-# doing something wrong.
-# In this case, we're adding the elements through a callback, so we can ignore
-# the exception.
-app = dash.Dash(__name__, suppress_callback_exceptions=True)
-
-app.layout = html.Div([
-    dcc.Location(id='url', refresh=False),
-    html.Div(id='page-content')
-])
+app.layout = html.Form([
+    html.H1('Страница 1'),
+    html.P('Сначала нужно заполнить поле'),
+    dcc.Input(name='name'),
+    html.Button('Submit', type='submit')
+], action='/page_2', method='post')
 
 
-index_page = html.Div([
-    dcc.Link('Go to Page 1', href='/page-1'),
-    html.Br(),
-    dcc.Link(html.Button(
-        'Отправить на парсинг', id='submit-button', className='btn btn-primary', n_clicks=0),
-        href='/output_info_for_user'
-    ),
-])
+# page_2_layout = html.Form([
+#     html.H1('Страница 2'),
+#     dcc.Input(name='name'),
+#     html.Button('Submit', type='submit')
+# ], action='/', method='post')
 
 
-@app.callback(Output('page-1-content', 'children'),
-              [Input('page-1-dropdown', 'value')])
-def page_1_dropdown(value):
-    return 'You have selected "{}"'.format(value)
-
-
-# Update the index
-@app.callback(Output('page-content', 'children'),
-              [Input('url', 'pathname')])
-def display_page(pathname):
-    if pathname == '/output_info_for_user':
-        return page_output_info
+@app.server.route('/page_2', methods=['POST'])
+def on_post():
+    data = flask.request.form
+    row = dict(data)
+    column = row['name']
+    if len(column) == 0:
+        print(column)
+        return flask.redirect('/')
     else:
-        return index_page
-    # You could also return a 404 "URL not found" page here
+        print(column)
+        return flask.redirect('/page_2')
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
-
+    app.run_server(debug=True, port=7779)
