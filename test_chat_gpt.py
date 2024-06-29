@@ -66,14 +66,14 @@ def handle_next(button, choose_user_cities):
     global previous_page
 
     if button:
+        print(button, choose_user_cities)
         choose_brand_and_cities(previous_page, choose_user_cities)
 
         dodo_values = [city['dodo_value'] for city in data]
         tashir_values = [city['tashir_value'] for city in data]
         tomato_values = [city['tomato_value'] for city in data]
         all_switches = dodo_values + tashir_values + tomato_values
-
-        check_data(data)
+        print(all_switches)
 
         if True not in all_switches:
             return '/dashboard/'
@@ -88,10 +88,10 @@ dash_app.layout = html.Div(
             max_value=get_total_page(PAGE_SIZE, len(data)),
             fully_expanded=False,
         ),
-        html.A(html.Button(
-            'Отправить на парсинг', id='submit-button', className='btn btn-primary', n_clicks=0),
-            href='/output_info_for_user'
-        ),
+
+        html.Form([
+            html.Button('Отправить на парсинг', id='submit-button', className='btn btn-primary', n_clicks=0),
+        ], action='/output_info_for_user', method='post'),
         dcc.Location(id='redirect', refresh=True),
         html.Div(id='container-output-text', children='Enter a value and press submit'),
     ],
