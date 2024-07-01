@@ -1,14 +1,18 @@
 import dash_bootstrap_components as dbc
-from dash import html, Input, Output, ALL, callback, State, dcc
+from dash import html, Input, Output, ALL, callback, State, dcc, no_update
 import dash
 from work_with_dash import data
 from components_for_dash_table import get_data_pagination, get_total_page, split_array, check_data
+from output_info_for_user import dash_page_output
+from flask.main import flask_app
+
 
 dash_app = dash.Dash(__name__,
+                     server=flask_app,
                      title="Checklist Test",
                      suppress_callback_exceptions=True,
                      external_stylesheets=[dbc.themes.SLATE],
-                     requests_pathname_prefix='/dashboard/'
+                     routes_pathname_prefix='/dash/'
                      )
 
 PAGE_SIZE = 15
@@ -58,9 +62,10 @@ def table_pagination(number_page: int) -> object:
 
 
 @callback(
-    Output('redirect', 'pathname'),
-    Input('submit-button', 'n_clicks'),
+    Output('url', 'pathname'),
+    [Input('page-input-button', 'n_clicks')],
     State({'type': 'dynamic-switch', 'index': ALL}, 'value'),
+    prevent_initial_call=True
 )
 def handle_next(button, choose_user_cities):
     global previous_page
@@ -76,11 +81,30 @@ def handle_next(button, choose_user_cities):
         print(all_switches)
 
         if True not in all_switches:
-            return '/dashboard/'
-    return dash.no_update
+            return no_update
+    return '/dash/page_output'
 
 
-dash_app.layout = html.Div(
+@dash_app.callback(
+    Output('page-content', 'children'),
+    [Input('url', 'pathname')]
+)
+def return_dash_layout(pathname):
+    print('return_dash_layout()')
+    if pathname == '/dash/page_input':
+        return page_input
+    elif pathname == '/dash/page_output':
+        return dash_page_output
+    else:
+        return '404'
+
+
+dash_app.layout = html.Div([
+    dcc.Location(id='url', refresh=False),
+    html.Div(id='page-content')
+])
+
+page_input = html.Div(
     children=[
         dbc.Table(id="table"),
         dbc.Pagination(
@@ -88,18 +112,32 @@ dash_app.layout = html.Div(
             max_value=get_total_page(PAGE_SIZE, len(data)),
             fully_expanded=False,
         ),
-
-        html.Form([
-            html.Button('Отправить на парсинг', id='submit-button', className='btn btn-primary', n_clicks=0),
-        ], action='/output_info_for_user', method='post'),
-        dcc.Location(id='redirect', refresh=True),
+        html.Button('Отправить на парсинг', id='page-input-button'),
         html.Div(id='container-output-text', children='Enter a value and press submit'),
     ],
     className="table-pagination",
 )
 
-if __name__ == "__main__":
-    dash_app.run_server(debug=True)
+# dash_app.layout = html.Div(
+#     children=[
+#         dbc.Table(id="table"),
+#         dbc.Pagination(
+#             id="pagination",
+#             max_value=get_total_page(PAGE_SIZE, len(data)),
+#             fully_expanded=False,
+#         ),
+#         html.Button('Далее', id='page-2-button'),
+#         # html.Form([
+#         #     html.Button('Отправить на парсинг', id='submit-button', className='btn btn-primary', n_clicks=0),
+#         # ], action='/output_info_for_user', method='post'),
+#         dcc.Location(id='url', refresh=True),
+#         html.Div(id='container-output-text', children='Enter a value and press submit'),
+#     ],
+#     className="table-pagination",
+# )
+
+# if __name__ == "__main__":
+#     dash_app.run_server(debug=True)
 
 # https://dash.plotly.com/advanced-callbacks
 # https://dash.plotly.com/determining-which-callback-input-changed
