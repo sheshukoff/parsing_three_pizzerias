@@ -1,26 +1,5 @@
 from create_table_sql import Brand, City, Section, Product, session
-from dash import Dash, html, dcc, dash_table, Input, Output, callback
-import dash_bootstrap_components as dbc
-from flask import Flask
-
-flask_app = Flask(__name__)
-
-dash_app_output = Dash(
-    __name__,
-    server=flask_app,
-    suppress_callback_exceptions=True,
-    external_stylesheets=[dbc.themes.SLATE],
-    requests_pathname_prefix='/output_info_for_user/'
-)
-
-
-@callback(Output('page-content', 'children'),
-          [Input('url', 'pathname')])
-def display_page(pathname):
-    if pathname == '/output_info_for_user':
-        return dash_app_output
-    else:
-        "404"
+from dash import html, dcc, dash_table
 
 
 get_table = (session.query(
@@ -52,70 +31,66 @@ columns = [
     {'name': 'Старая цена', 'id': 'old_price'},
 ]
 
-dash_app_output.layout = html.Div([
-    dcc.Location(id='url', refresh=False),
-    html.Div(id='page-content'),
-    html.Div(
-        children=[
-            dash_table.DataTable(
-                data=output_info,
-                columns=columns,
-                page_action="native",
-                filter_action="native",
-                sort_action="native",
-                sort_mode="multi",
-                column_selectable="single",
-                row_selectable="multi",
-                page_current=0,
-                page_size=15,
-                tooltip_duration=500,
-                tooltip_data=[
-                    {
-                        column: {'value': str(value), 'type': 'markdown'}
-                        for column, value in row.items()
-                    } for row in output_info
-                ],
-                style_data={
-                    # 'whiteSpace': 'normal',
-                    'height': 'auto'
-                },
-                style_header={'backgroundColor': '#161a1d',
-                              'fontWeight': 'bold',
-                              'color': '#FFFFFF',
-                              'border': '1px solid black',
-                              'font-family': 'Noto Kufi Arabic'
-                              },
-                style_table={'height': '670px',
-                             'overflow': 'auto',
-                             'width': '100%',
-                             'margin': 'auto'},
-                style_cell={'padding': '5px',
-                            'fontSize': 16,
-                            'font-family': 'Noto Kufi Arabic',
-                            'textAlign': 'left',
-                            'border': '2px solid grey',
-                            'backgroundColor': '#161a1d',
-                            'color': '#a0a1ab',
-                            'overflow': 'hidden',
-                            'textOverflow': 'ellipsis',
-                            'maxWidth': 0},
-                style_cell_conditional=[
-                    {'if': {'column_id': 'Бренд'},
-                        'width': '5%'},
-                    {'if': {'column_id': 'Город'},
-                     'width': '5%'},
-                    {'if': {'column_id': 'Секция'},
-                     'width': '5%'},
-                    {'if': {'column_id': 'Название продукта'},
-                     'width': '10%'},
-                    {'if': {'column_id': 'Описание'},
-                     'width': '65%'},
-                    {'if': {'column_id': 'Новая цена'},
-                     'width': '5%'},
-                    {'if': {'column_id': 'Старая цена'},
-                     'width': '5%'},
-                ],
-            )
-        ]
-    )
-])
+dash_page_output = html.Div(
+    children=[
+        dash_table.DataTable(
+            data=output_info,
+            columns=columns,
+            page_action="native",
+            filter_action="native",
+            sort_action="native",
+            sort_mode="multi",
+            column_selectable="single",
+            row_selectable="multi",
+            page_current=0,
+            page_size=15,
+            tooltip_duration=500,
+            tooltip_data=[
+                {
+                    column: {'value': str(value), 'type': 'markdown'}
+                    for column, value in row.items()
+                } for row in output_info
+            ],
+            style_data={
+                # 'whiteSpace': 'normal',
+                'height': 'auto'
+            },
+            style_header={'backgroundColor': '#161a1d',
+                          'fontWeight': 'bold',
+                          'color': '#FFFFFF',
+                          'border': '1px solid black',
+                          'font-family': 'Noto Kufi Arabic'
+                          },
+            style_table={'height': '670px',
+                         'overflow': 'auto',
+                         'width': '100%',
+                         'margin': 'auto'},
+            style_cell={'padding': '5px',
+                        'fontSize': 16,
+                        'font-family': 'Noto Kufi Arabic',
+                        'textAlign': 'left',
+                        'border': '2px solid grey',
+                        'backgroundColor': '#161a1d',
+                        'color': '#a0a1ab',
+                        'overflow': 'hidden',
+                        'textOverflow': 'ellipsis',
+                        'maxWidth': 0},
+            style_cell_conditional=[
+                {'if': {'column_id': 'Бренд'},
+                    'width': '5%'},
+                {'if': {'column_id': 'Город'},
+                 'width': '5%'},
+                {'if': {'column_id': 'Секция'},
+                 'width': '5%'},
+                {'if': {'column_id': 'Название продукта'},
+                 'width': '10%'},
+                {'if': {'column_id': 'Описание'},
+                 'width': '65%'},
+                {'if': {'column_id': 'Новая цена'},
+                 'width': '5%'},
+                {'if': {'column_id': 'Старая цена'},
+                 'width': '5%'},
+            ],
+        )
+    ]
+)
