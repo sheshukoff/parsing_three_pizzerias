@@ -120,7 +120,7 @@ label:active:after {
 
 
 /* кнопка "Отрпавить на парсинг" */
-#submit-button {
+#page-input-button {
     font-family: Lobster;
     position: relative;
     color: #fff;
