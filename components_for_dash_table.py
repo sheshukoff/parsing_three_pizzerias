@@ -15,20 +15,6 @@ def split_array(choose_user_cities: list) -> list[list]:
     return split_choose_user
 
 
-def check_data(data):
-    cities_for_parsing = {'Додо': [], 'Ташир': [], 'Томато': []}
-
-    dodo_cities = [city['city'] for city in data if city['dodo_value'] is True]
-    tashir_cities = [city['city'] for city in data if city['tashir_value'] is True]
-    tomato_cities = [city['city'] for city in data if city['tomato_value'] is True]
-
-    cities_for_parsing['Додо'] = dodo_cities
-    cities_for_parsing['Ташир'] = tashir_cities
-    cities_for_parsing['Томато'] = tomato_cities
-    print(cities_for_parsing)
-    return cities_for_parsing
-
-
 def check_toggle_switch(type_boolean: bool, id_str: str, value: bool) -> object:
     if type_boolean is True:
         return html.Div(
