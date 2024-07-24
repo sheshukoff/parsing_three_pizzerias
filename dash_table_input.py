@@ -1,11 +1,16 @@
 import dash_bootstrap_components as dbc
 from dash import html, Input, Output, ALL, State, dcc, no_update
 import dash
-from work_with_dash import data
+from sort_cities import create_dash_table
 from components_for_dash_table import get_data_pagination, get_total_page, split_array
 
 PAGE_SIZE = 15
-previous_page = 1
+
+
+# previous_page = 1
+
+
+# сделать create_dash_table в data
 
 
 def init_dash_table(flask_app):
@@ -20,68 +25,92 @@ def init_dash_table(flask_app):
 
 
 def init_dash_table_input(dash_app, page_size, dash_page_output):
+    data = create_dash_table()
+
     @dash_app.callback(
-        Output('container-output-text', 'children'),
-        Input('pagination', 'active_page'),
-        State({'type': 'dynamic-switch', 'index': ALL}, 'value'),
+        Output('previous_page_session', 'data'),  # записал данные
+        Input('table', 'children'),  # выбрал стрницу
+        State('pagination', 'active_page')
     )
-    def choose_brand_and_cities(number_page: int, choose_user_cities: list):
-        global previous_page
+    def previous_page_session(number_page: int, active_page: int):
+        if active_page is None:
+            active_page = 1
 
-        if number_page is None:
-            number_page = 1
+        previous_page = active_page
+        print(f'previous_page->{previous_page}')
 
+        return previous_page
+
+    @dash_app.callback(
+        Output('dash_table_session', 'data'),  # записал данные
+        Input('pagination', 'active_page'),  # выбрал стрницу
+        [State('dash_table_session', 'data'),  # считал данные
+         State({'type': 'dynamic-switch', 'index': ALL}, 'value'),
+         State('previous_page_session', 'data')]  # считал данные
+    )
+    def choose_brand_and_cities(active_page: int, create_table, choose_user_cities: list, previous_page):
+        if create_table is None:
+            create_table = data
+
+        if previous_page is None:
+            previous_page = 1
+
+        print('66 choose_brand_and_cities', f'active_page->{active_page}  previous_page->{previous_page}')
         start = (previous_page - 1) * page_size
         split_choose_user = split_array(choose_user_cities)  # разбито на три
 
         for number, values in enumerate(split_choose_user):
             dodo_value, tashir_value, tomato_value = values
 
-            data[start + number]['dodo_value'] = dodo_value
-            data[start + number]['tashir_value'] = tashir_value
-            data[start + number]['tomato_value'] = tomato_value
+            create_table[start + number]['dodo_value'] = dodo_value
+            create_table[start + number]['tashir_value'] = tashir_value
+            create_table[start + number]['tomato_value'] = tomato_value
 
-        previous_page = number_page
-
-        return ''
+        return create_table
 
     @dash_app.callback(
-        Output('table', 'children'),
-        Input('pagination', 'active_page'),
+        Output('table', 'children'),  # записал таблицу
+        Input('dash_table_session', 'data'),  # выбрал страницу
+        State('pagination', 'active_page')  # считал данные
     )
-    def table_pagination(number_page: int) -> object:
-        active_page = 1 if not number_page else int(number_page)
+    def table_pagination(create_table, number_page):  # сборка таблицы, возвращаю таблицу
+        active_page = 1 if not number_page else int(number_page)  # нужна активная страница
+        print('86 table_pagination', active_page)
+
+        if create_table is None:
+            create_table = data
 
         start = (active_page - 1) * page_size
         end = start + page_size
 
-        part_table = data[start:end]
+        part_table = create_table[start:end]
+        print(part_table)
         table = get_data_pagination(part_table)
-
         return table
 
     @dash_app.callback(
         Output('url', 'pathname'),
-        [Input('page-input-button', 'n_clicks')],
-        State({'type': 'dynamic-switch', 'index': ALL}, 'value'),
-        prevent_initial_call=True
+        Input('page-input-button', 'n_clicks'),
+        [State({'type': 'dynamic-switch', 'index': ALL}, 'value'),
+         State('previous_page_session', 'data'),
+         State('dash_table_session', 'data')]
     )
-    def handle_next(button, choose_user_cities):
-        global previous_page
+    def handle_next(button, choose_user_cities, previous_page, create_table):
 
         if button:
-            print(button, choose_user_cities)
-            choose_brand_and_cities(previous_page, choose_user_cities)
+            print(button, choose_user_cities, previous_page, create_table)
+            choose_brand_and_cities(previous_page, create_table, choose_user_cities)
 
-            dodo_values = [city['dodo_value'] for city in data]
-            tashir_values = [city['tashir_value'] for city in data]
-            tomato_values = [city['tomato_value'] for city in data]
+            dodo_values = [city['dodo_value'] for city in create_table]
+            tashir_values = [city['tashir_value'] for city in create_table]
+            tomato_values = [city['tomato_value'] for city in create_table]
             all_switches = dodo_values + tashir_values + tomato_values
             print(all_switches)
 
             if True not in all_switches:
                 return no_update
-        return '/dash/page_output'
+            return '/dash/page_output'
+        return no_update
 
     @dash_app.callback(
         Output('page-content', 'children'),
@@ -98,19 +127,23 @@ def init_dash_table_input(dash_app, page_size, dash_page_output):
 
     dash_app.layout = html.Div([
         dcc.Location(id='url', refresh=False),
-        html.Div(id='page-content')
+        html.Div(id='page-content'),
     ])
 
     page_input = html.Div(
         children=[
-            dbc.Table(id="table"),
+            dcc.Store(id='previous_page_session', storage_type='session'),
+            dcc.Store(id='dash_table_session', storage_type='session'),
+            dcc.Store(id='active_page_session', storage_type='session'),
+            dbc.Table(id='table'),
             dbc.Pagination(
                 id="pagination",
                 max_value=get_total_page(page_size, len(data)),
                 fully_expanded=False,
             ),
             html.Button('Отправить на парсинг', id='page-input-button'),
-            html.Div(id='container-output-text', children='Enter a value and press submit'),
         ],
         className="table-pagination",
     )
+
+# по фиксить баг из функции create_table
