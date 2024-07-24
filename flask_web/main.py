@@ -100,6 +100,7 @@ if __name__ == "__main__":
     def loader_user(user_id):
         print("================ loader_user ==================")
         return session.get(Authorized_users, user_id)
+
     flask_app.add_url_rule("/", "index_page", index_page, methods=["GET", "POST"])
     flask_app.add_url_rule("/sign_in", "sign_in", sign_in, methods=["GET", "POST"])
     flask_app.add_url_rule("/sign_up", "sign_up", sign_up, methods=["GET", "POST"])
@@ -109,5 +110,6 @@ if __name__ == "__main__":
     dash_app = init_dash_table(flask_app)
     dash_page_output = init_dash_table_output()
     init_dash_table_input(dash_app, PAGE_SIZE, dash_page_output)
+    print('113')
 
-    flask_app.run(debug=True)
+    flask_app.run()
