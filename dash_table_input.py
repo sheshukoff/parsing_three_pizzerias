@@ -44,7 +44,7 @@ def init_dash_table_input(dash_app, page_size, dash_page_output):
     @dash_app.callback(
         Output('dash_table_session', 'data'),  # записал данные
         Input('pagination', 'active_page'),  # выбрал стрницу
-        [State('dash_table_session', 'data'),  # считал данные
+        [State('dash_table_session', 'data'),
          State({'type': 'dynamic-switch', 'index': ALL}, 'value'),
          State('previous_page_session', 'data')]  # считал данные
     )
@@ -84,7 +84,7 @@ def init_dash_table_input(dash_app, page_size, dash_page_output):
         end = start + page_size
 
         part_table = create_table[start:end]
-        print(part_table)
+        # print(part_table)
         table = get_data_pagination(part_table)
         return table
 
@@ -93,19 +93,28 @@ def init_dash_table_input(dash_app, page_size, dash_page_output):
         Input('page-input-button', 'n_clicks'),
         [State({'type': 'dynamic-switch', 'index': ALL}, 'value'),
          State('previous_page_session', 'data'),
-         State('dash_table_session', 'data')]
+         State('dash_table_session', 'data'),
+         State('pagination', 'active_page')]
     )
-    def handle_next(button, choose_user_cities, previous_page, create_table):
+    def handle_next(button, choose_user_cities, previous_page, create_table, active_page):
 
         if button:
-            print(button, choose_user_cities, previous_page, create_table)
-            choose_brand_and_cities(previous_page, create_table, choose_user_cities)
+            print('handle_next', button, previous_page, active_page)
+            choose_brand_and_cities(active_page, create_table, choose_user_cities, previous_page)
 
             dodo_values = [city['dodo_value'] for city in create_table]
             tashir_values = [city['tashir_value'] for city in create_table]
             tomato_values = [city['tomato_value'] for city in create_table]
             all_switches = dodo_values + tashir_values + tomato_values
             print(all_switches)
+
+            dodo_city = [city['city'] for city in create_table if city['dodo_value'] is True]
+            tashir_city = [city['city'] for city in create_table if city['tashir_value'] is True]
+            tomato_city = [city['city'] for city in create_table if city['tomato_value'] is True]
+
+            print(f'''dodo_city->{dodo_city}
+                      tashir_city->{tashir_city}
+                      tomato_city->{tomato_city}''')
 
             if True not in all_switches:
                 return no_update
@@ -145,5 +154,3 @@ def init_dash_table_input(dash_app, page_size, dash_page_output):
         ],
         className="table-pagination",
     )
-
-# по фиксить баг из функции create_table
