@@ -1,6 +1,6 @@
 from flask import Flask
 
-from new_test import make_dash, make_layout, define_callbacks
+from another_file.new_test import make_dash, make_layout, define_callbacks
 
 app = Flask(__name__)
 
