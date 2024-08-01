@@ -1,5 +1,6 @@
 import dash_bootstrap_components as dbc
 from dash import html
+from dash import dcc
 
 
 def split_array(choose_user_cities: list) -> list[list]:
@@ -13,6 +14,17 @@ def split_array(choose_user_cities: list) -> list[list]:
         index += 3
 
     return split_choose_user
+
+
+def progress_bar(progress_parsing: int, id_str: str):
+    progress = html.Div(
+        [
+            dcc.Interval(id="progress-interval", n_intervals=0, interval=500),
+            dbc.Progress(id=f"{id_str}-progress", value=progress_parsing, striped=True, color='green'),
+        ]
+    )
+
+    return progress
 
 
 def check_toggle_switch(type_boolean: bool, id_str: str, value: bool) -> object:
@@ -71,6 +83,36 @@ def get_data_pagination(part_table) -> object:
                 html.Td(check_toggle_switch(row['dodo'], f'{id}-0', row['dodo_value']), id="dodo-cell"),
                 html.Td(check_toggle_switch(row['tashir'], f'{id}-1', row['tashir_value']), id="tashir-cell"),
                 html.Td(check_toggle_switch(row['tomato'], f'{id}-2', row['tomato_value']), id="tomato-cell"),
+            ]
+        )
+        table_rows.append(table_row)
+
+    table_body = [html.Tbody(table_rows)]
+
+    table = dbc.Table(table_header + table_body, striped=True, bordered=True, hover=True, className='p-3', size='sm')
+
+    return table
+
+
+def waiting_parsing(progress_parsing: int) -> object:
+    table_header = [
+        html.Thead(
+            html.Tr([
+                html.Th("Бренд", id="header-city"),
+                html.Th("Прогресс", id="header-dodo"),
+            ]),
+            className="header",
+        ),
+    ]
+
+    brands = ['Додо', 'Ташир', 'Томато']
+
+    table_rows = []
+    for id, row in enumerate(brands):
+        table_row = html.Tr(
+            [
+                html.Td(row, id="brand-cell"),
+                html.Td(progress_bar(progress_parsing, f'{id}-0'), id="progress-cell"),
             ]
         )
         table_rows.append(table_row)
