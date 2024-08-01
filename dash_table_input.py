@@ -24,7 +24,7 @@ def init_dash_table(flask_app):
     return dash_app
 
 
-def init_dash_table_input(dash_app, page_size, dash_page_output):
+def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_page_output):
     data = create_dash_table()
 
     @dash_app.callback(
@@ -118,7 +118,7 @@ def init_dash_table_input(dash_app, page_size, dash_page_output):
 
             if True not in all_switches:
                 return no_update
-            return '/dash/page_output'
+            return '/dash/page_waiting_parsing'
         return no_update
 
     @dash_app.callback(
@@ -129,6 +129,8 @@ def init_dash_table_input(dash_app, page_size, dash_page_output):
         print('return_dash_layout()')
         if pathname == '/dash/page_input':
             return page_input
+        elif pathname == '/dash/page_waiting_parsing':
+            return dash_table_waiting_parsing
         elif pathname == '/dash/page_output':
             return dash_page_output
         else:
@@ -154,3 +156,7 @@ def init_dash_table_input(dash_app, page_size, dash_page_output):
         ],
         className="table-pagination",
     )
+
+
+#  'url', 'pathname' -> State ('dash_table_session') -> 'table' 'children'
+#  делаю таблицу в companents_for_dash_table
