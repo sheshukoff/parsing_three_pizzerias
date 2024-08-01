@@ -7,6 +7,7 @@ from write_query_sql import search_password, recieve_user_login, load_table_auth
 
 from dash_table_input import init_dash_table, init_dash_table_input, PAGE_SIZE
 from dash_table_output import init_dash_table_output
+from dash_table_waiting_parsing import init_dash_table_waiting_parsing
 
 
 def index_page():
@@ -109,7 +110,7 @@ if __name__ == "__main__":
 
     dash_app = init_dash_table(flask_app)
     dash_page_output = init_dash_table_output()
-    init_dash_table_input(dash_app, PAGE_SIZE, dash_page_output)
-    print('113')
+    dash_table_waiting_parsing = init_dash_table_waiting_parsing(dash_app)
+    init_dash_table_input(dash_app, PAGE_SIZE, dash_table_waiting_parsing, dash_page_output)
 
     flask_app.run()
