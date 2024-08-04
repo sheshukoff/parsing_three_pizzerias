@@ -106,31 +106,39 @@ def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_
         return True in all_switches
 
     @dash_app.callback(
-        Output('url', 'pathname'),
+        Output('url', 'pathname', allow_duplicate=True),
         Input('page-input-button', 'n_clicks'),
-        State('url', 'pathname'),
-         # State('dash_table_session', 'data'),
-         # State({'type': 'dynamic-switch', 'index': ALL}, 'value'),
-         # State('previous_page_session', 'data'),
-         # State('pagination', 'active_page')],
-        # prevent_initial_call=True
+        [State('url', 'pathname'),
+         State('dash_table_session', 'data'),
+         State({'type': 'dynamic-switch', 'index': ALL}, 'value'),
+         State('previous_page_session', 'data'),
+         State('pagination', 'active_page')],
+        prevent_initial_call=True
     )
-    def url_router(button_input, url_address, create_table, choose_user_cities, previous_page, active_page):
-        print('another_function', url_address, button_input)
-        if button_input:
+    def url_router(button, url_address, create_table, choose_user_cities, previous_page, active_page):
+        print('url_router', button, url_address)
+        if button:
             if url_address == '/dash/page_input':
                 choose_brand_and_cities(active_page, create_table, choose_user_cities, previous_page)
                 if any_toggle_switches(create_table):
                     return '/dash/page_waiting_parsing'
-                # else:
-                    # return no_update create_table, choose_user_cities, previous_page, active_page
-            elif url_address == '/dash/page_waiting_parsing':
-                return '/dash/page_output'
+                else:
+                    return no_update
 
         return no_update
 
+    @dash_app.callback(
+        Output('url', 'pathname'),
+        Input('subtotal-input', 'n_clicks'),
+        State('url', 'pathname')
+    )
+    def url_router_2(button, url_address):
+        print('url_router_2', button, url_address)
+        if button:
+            if url_address == '/dash/page_waiting_parsing':
+                return '/dash/page_output'
 
-    def url_router_2():
+        return no_update
 
     @dash_app.callback(
         Output('page-content', 'children'),
