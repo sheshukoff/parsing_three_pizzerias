@@ -98,8 +98,8 @@ def waiting_parsing(progress_parsing: int) -> object:
     table_header = [
         html.Thead(
             html.Tr([
-                html.Th("Бренд", id="header-city"),
-                html.Th("Прогресс", id="header-dodo"),
+                html.Th("Бренд", id="brands-city"),
+                html.Th("Прогресс", id="progress-bar"),
             ]),
             className="header",
         ),
