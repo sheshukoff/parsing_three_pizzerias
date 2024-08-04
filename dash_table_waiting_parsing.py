@@ -1,4 +1,4 @@
-from dash import html, Input, Output, dcc
+from dash import html, Input, Output, dcc, no_update
 import dash_bootstrap_components as dbc
 from components_for_dash_table import waiting_parsing
 
@@ -13,18 +13,19 @@ def init_dash_table_waiting_parsing(dash_app):
         waiting_table = waiting_parsing(12)
         return waiting_table
 
-    @dash_app.callback(
-        Output('url', 'pathname'),
-        [Input('subtotal-input', 'n_clicks')],
-    )
-    def return_output_table(button):
-        if button:
-            return '/dash/page_output'
+    # @dash_app.callback(
+    #     Output('url', 'pathname'),
+    #     [Input('subtotal-input', 'n_clicks')],
+    # )
+    # def return_output_table(button):
+    #     if button:
+    #         return '/dash/page_output'
+    #     return no_update
 
     table_waiting_parsing = html.Div(
         children=[
             dbc.Table(id='table_for_waiting_parsing'),
-            html.Button('Промежуточный итог', id='subtotal-input'),
+            html.Button('Промежуточный итог', id='page-input-button'),
         ],
         className="table-pagination",
     )
