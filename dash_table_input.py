@@ -88,42 +88,53 @@ def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_
         table = get_data_pagination(part_table)
         return table
 
+    def any_toggle_switches(create_table):
+        dodo_values = [city['dodo_value'] for city in create_table]
+        tashir_values = [city['tashir_value'] for city in create_table]
+        tomato_values = [city['tomato_value'] for city in create_table]
+        all_switches = dodo_values + tashir_values + tomato_values
+        print(all_switches)
+
+        dodo_city = [city['city'] for city in create_table if city['dodo_value'] is True]
+        tashir_city = [city['city'] for city in create_table if city['tashir_value'] is True]
+        tomato_city = [city['city'] for city in create_table if city['tomato_value'] is True]
+
+        print(f'''dodo_city->{dodo_city}
+                  tashir_city->{tashir_city}
+                  tomato_city->{tomato_city}''')
+
+        return True in all_switches
+
     @dash_app.callback(
         Output('url', 'pathname'),
         Input('page-input-button', 'n_clicks'),
-        [State({'type': 'dynamic-switch', 'index': ALL}, 'value'),
-         State('previous_page_session', 'data'),
-         State('dash_table_session', 'data'),
-         State('pagination', 'active_page')]
+        State('url', 'pathname'),
+         # State('dash_table_session', 'data'),
+         # State({'type': 'dynamic-switch', 'index': ALL}, 'value'),
+         # State('previous_page_session', 'data'),
+         # State('pagination', 'active_page')],
+        # prevent_initial_call=True
     )
-    def handle_next(button, choose_user_cities, previous_page, create_table, active_page):
+    def url_router(button_input, url_address, create_table, choose_user_cities, previous_page, active_page):
+        print('another_function', url_address, button_input)
+        if button_input:
+            if url_address == '/dash/page_input':
+                choose_brand_and_cities(active_page, create_table, choose_user_cities, previous_page)
+                if any_toggle_switches(create_table):
+                    return '/dash/page_waiting_parsing'
+                # else:
+                    # return no_update create_table, choose_user_cities, previous_page, active_page
+            elif url_address == '/dash/page_waiting_parsing':
+                return '/dash/page_output'
 
-        if button:
-            print('handle_next', button, previous_page, active_page)
-            choose_brand_and_cities(active_page, create_table, choose_user_cities, previous_page)
-
-            dodo_values = [city['dodo_value'] for city in create_table]
-            tashir_values = [city['tashir_value'] for city in create_table]
-            tomato_values = [city['tomato_value'] for city in create_table]
-            all_switches = dodo_values + tashir_values + tomato_values
-            print(all_switches)
-
-            dodo_city = [city['city'] for city in create_table if city['dodo_value'] is True]
-            tashir_city = [city['city'] for city in create_table if city['tashir_value'] is True]
-            tomato_city = [city['city'] for city in create_table if city['tomato_value'] is True]
-
-            print(f'''dodo_city->{dodo_city}
-                      tashir_city->{tashir_city}
-                      tomato_city->{tomato_city}''')
-
-            if True not in all_switches:
-                return no_update
-            return '/dash/page_waiting_parsing'
         return no_update
+
+
+    def url_router_2():
 
     @dash_app.callback(
         Output('page-content', 'children'),
-        [Input('url', 'pathname')]
+        Input('url', 'pathname'),
     )
     def return_dash_layout(pathname):
         print('return_dash_layout()')
@@ -146,6 +157,7 @@ def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_
             dcc.Store(id='previous_page_session', storage_type='session'),
             dcc.Store(id='dash_table_session', storage_type='session'),
             dcc.Store(id='active_page_session', storage_type='session'),
+            dcc.Store(id='url_router_execution_session', storage_type='session'),
             dbc.Table(id='table'),
             dbc.Pagination(
                 id="pagination",
@@ -156,7 +168,6 @@ def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_
         ],
         className="table-pagination",
     )
-
 
 #  'url', 'pathname' -> State ('dash_table_session') -> 'table' 'children'
 #  делаю таблицу в companents_for_dash_table
