@@ -1,6 +1,7 @@
 import selenium
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 
 import os
 import shutil
@@ -29,7 +30,7 @@ def get_page_soup_from_url(city_url: str) -> dict[str, BeautifulSoup]:
     roster_soups = {}
 
     for section in section_tomato:
-        driver = webdriver.Chrome(options=chrome_options)
+        driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=chrome_options)
         URL = f"https://www.tomato-pizza.ru/menu/{city_url}/{section}"
 
         try:

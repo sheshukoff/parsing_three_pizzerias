@@ -1,6 +1,7 @@
 import selenium
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 
 import os
 import shutil
@@ -23,7 +24,8 @@ def get_page_soup_from_url(city_url: str) -> BeautifulSoup:
     chrome_options = Options()
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
-    driver = webdriver.Chrome()
+
+    driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=chrome_options)
 
     URL = f"https://tashirpizza.ru{city_url}"
 
