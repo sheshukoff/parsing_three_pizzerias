@@ -16,15 +16,17 @@ def split_array(choose_user_cities: list) -> list[list]:
     return split_choose_user
 
 
-def progress_bar(progress_parsing: int, id_str: str):
+def progress_bar(brand: str):
     progress = html.Div(
         [
-            dcc.Interval(id="progress-interval", n_intervals=0, interval=500),
-            dbc.Progress(id=f"{id_str}-progress", value=progress_parsing, striped=True, color='green'),
+            dcc.Interval(id="progress-interval", n_intervals=0, interval=1500),
+            dbc.Progress(id=f"{brand}-progress", color='#ffffff'),
         ]
     )
 
     return progress
+
+#  https://codepen.io/traf/pen/oKbaqQ
 
 
 def check_toggle_switch(type_boolean: bool, id_str: str, value: bool) -> object:
@@ -94,7 +96,7 @@ def get_data_pagination(part_table) -> object:
     return table
 
 
-def waiting_parsing(progress_parsing: int) -> object:
+def waiting_parsing() -> object:
     table_header = [
         html.Thead(
             html.Tr([
@@ -105,14 +107,14 @@ def waiting_parsing(progress_parsing: int) -> object:
         ),
     ]
 
-    brands = ['Додо', 'Ташир', 'Томато']
+    brands = {'Додо': 'dodo', 'Ташир': 'tashir', 'Томато': 'tomato'}
 
     table_rows = []
-    for id, row in enumerate(brands):
+    for name_brand, id_name_brand in brands.items():
         table_row = html.Tr(
             [
-                html.Td(row, id="brand-cell"),
-                html.Td(progress_bar(progress_parsing, f'{id}-0'), id="progress-cell"),
+                html.Td(name_brand, id="brand-cell"),
+                html.Td(progress_bar(id_name_brand), id=f"row-progress-{id_name_brand}"),
             ]
         )
         table_rows.append(table_row)
