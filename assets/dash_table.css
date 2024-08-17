@@ -131,8 +131,8 @@ label:active:after {
 }
 
 /* Таблица 'Ожидание парсинга'" */
-#progress-cell {
-    width: 70%;
+#brand-cell {
+    width: 20%;
 }
 
 /* Кнопка 'Промежуточный итог'" */
@@ -145,8 +145,3 @@ label:active:after {
     left: 900px;
     top: -20px;
 }
-
-
-
-
-
