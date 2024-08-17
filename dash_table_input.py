@@ -1,5 +1,5 @@
 import dash_bootstrap_components as dbc
-from dash import html, Input, Output, ALL, State, dcc, no_update
+from dash import html, Input, Output, ALL, State, dcc, no_update, set_props
 import dash
 from sort_cities import create_dash_table
 from components_for_dash_table import get_data_pagination, get_total_page, split_array
@@ -84,7 +84,6 @@ def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_
         end = start + page_size
 
         part_table = create_table[start:end]
-        # print(part_table)
         table = get_data_pagination(part_table)
         return table
 
@@ -93,17 +92,15 @@ def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_
         tashir_values = [city['tashir_value'] for city in create_table]
         tomato_values = [city['tomato_value'] for city in create_table]
         all_switches = dodo_values + tashir_values + tomato_values
-        print(all_switches)
 
+        return True in all_switches
+
+    def get_cities_for_parsing(create_table):
         dodo_city = [city['city'] for city in create_table if city['dodo_value'] is True]
         tashir_city = [city['city'] for city in create_table if city['tashir_value'] is True]
         tomato_city = [city['city'] for city in create_table if city['tomato_value'] is True]
 
-        print(f'''dodo_city->{dodo_city}
-                  tashir_city->{tashir_city}
-                  tomato_city->{tomato_city}''')
-
-        return True in all_switches
+        return {'Додо': dodo_city, 'Ташир': tashir_city, 'Томато': tomato_city}
 
     @dash_app.callback(
         Output('url', 'pathname', allow_duplicate=True),
@@ -121,6 +118,7 @@ def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_
             if url_address == '/dash/page_input':
                 choose_brand_and_cities(active_page, create_table, choose_user_cities, previous_page)
                 if any_toggle_switches(create_table):
+                    set_props('choose_cities_session', {'data': get_cities_for_parsing(create_table)})
                     return '/dash/page_waiting_parsing'
                 else:
                     return no_update
@@ -164,6 +162,7 @@ def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_
         children=[
             dcc.Store(id='previous_page_session', storage_type='session'),
             dcc.Store(id='dash_table_session', storage_type='session'),
+            dcc.Store(id='choose_cities_session', storage_type='session'),
             dcc.Store(id='active_page_session', storage_type='session'),
             dcc.Store(id='url_router_execution_session', storage_type='session'),
             dbc.Table(id='table'),
