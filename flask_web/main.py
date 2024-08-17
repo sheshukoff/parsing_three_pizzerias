@@ -110,7 +110,7 @@ if __name__ == "__main__":
 
     dash_app = init_dash_table(flask_app)
     dash_page_output = init_dash_table_output()
-    dash_table_waiting_parsing = init_dash_table_waiting_parsing(dash_app)
+    dash_table_waiting_parsing = init_dash_table_waiting_parsing(dash_app)  #
     init_dash_table_input(dash_app, PAGE_SIZE, dash_table_waiting_parsing, dash_page_output)
 
     flask_app.run()
