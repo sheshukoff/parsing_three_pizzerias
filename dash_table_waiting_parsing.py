@@ -123,7 +123,6 @@ def init_dash_table_waiting_parsing(dash_app):
 # Output('dodo_progress', 'value')
 # Output('dodo_progress', 'label')
 # def change_progress_bar(now_percent: int, brand: ?)  # Отображает изменение прогрессбара на страницце
-#     # TODO узнать как менять property dash компонентов
 #     return value, label
 
 # Условие окончания парсинга
