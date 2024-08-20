@@ -29,6 +29,7 @@ def find_url_cities_dodo() -> dict:
 
     soup = get_page_soup_from_file(URL)
     table_cities = soup.find("div", {"class": "locality-selector-popup__table"})
+    print(table_cities)
     all_tags_a = table_cities.find_all("a")
 
     for city in all_tags_a:
@@ -117,7 +118,7 @@ def choose_brand():
     return selected_brands
 
 
-def choose_city(brand: str, url_cities_brand: dict) -> dict:
+def choose_city(brand: str, url_cities_brand: dict) -> list:
     """
     Функция возращает список брендов, коротые выбрал пользователь.
     :param brand: str
@@ -126,7 +127,6 @@ def choose_city(brand: str, url_cities_brand: dict) -> dict:
     """
     list_cities = list(url_cities_brand.keys())
     selected_cities = []
-    roster = {}
 
     while True:
         for number, city in enumerate(list_cities, 1):
@@ -142,44 +142,59 @@ def choose_city(brand: str, url_cities_brand: dict) -> dict:
         else:
             print(f"Некорректный ввод. Пожалуйста, выберите число от 1 до {len(list_cities)}")
 
-    roster[brand] = selected_cities
-
-    return roster
+    return selected_cities
 
 
-def get_city_for_brand(list_brands: list) -> list:
+def get_city_for_brand(list_brands: list) -> dict:
     """
     Функция возращает список городов для брендов
     :param list_brands: str
     :return: list
     """
 
-    city_for_brand = []
+    cities_for_brand = {'Додо': [], 'Ташир': [], 'Томато': []}
 
     for brand in list_brands:
         if brand == "Додо":
             url_cities_dodo = find_url_cities_dodo()
-            roster_dodo = choose_city(brand, url_cities_dodo)
-            city_for_brand.append(roster_dodo)
+            selected_cities_dodo = choose_city(brand, url_cities_dodo)
+            cities_for_brand['Додо'] = selected_cities_dodo
             print("Выбранные города:")
-            print(roster_dodo)
+            print(selected_cities_dodo)
         elif brand == "Ташир":
             url_cities_tashir = find_url_cities_tashir()
-            roster_tashir = choose_city(brand, url_cities_tashir)
-            city_for_brand.append(roster_tashir)
+            selected_cities_tashir = choose_city(brand, url_cities_tashir)
+            cities_for_brand['Ташир'] = selected_cities_tashir
             print("Выбранные города:")
-            print(roster_tashir)
+            print(selected_cities_tashir)
         elif brand == "Томато":
             url_cities_tomato = find_url_cities_tomato()
-            roster_tomato = choose_city(brand, url_cities_tomato)
-            city_for_brand.append(roster_tomato)
+            selected_cities_tomato = choose_city(brand, url_cities_tomato)
+            cities_for_brand['Томато'] = selected_cities_tomato
             print("Выбранные города:")
-            print(roster_tomato)
+            print(selected_cities_tomato)
 
-    return city_for_brand
+    return cities_for_brand
 
 
-def big_work_with_user() -> list:
+def update_cities_for_brands():
+    list_brands = choose_brand()
+    for brand in list_brands:
+        if brand == 'Додо':
+            soup_dodo = update_url_cities_dodo()
+            write_file_urls(soup_dodo, brand)
+            print(f'Города бренда "{brand}" обновлены')
+        elif brand == 'Ташир':
+            soup_tashir = update_url_cities_tashir()
+            write_file_urls(soup_tashir, brand)
+            print(f'Города бренда "{brand}" обновлены')
+        elif brand == 'Томато':
+            soup_tomato = update_url_cities_tomato()
+            write_file_urls(soup_tomato, brand)
+            print(f'Города бренда "{brand}" обновлены')
+
+
+def big_work_with_user() -> dict:
     """
     Функция для работы с пользователем. Обновляет города, которые будут доступны для пользователяю.
     :return: list
@@ -187,22 +202,9 @@ def big_work_with_user() -> list:
 
     input_message = input("Нужно ли обновить города по пиццериям напишите Y/n: ")
     if input_message.lower() == 'y':
-        list_brands = choose_brand()
-        for brand in list_brands:
-            if brand == 'Додо':
-                soup_dodo = update_url_cities_dodo()
-                write_file_urls(soup_dodo, brand)
-                print(f'Города бренда "{brand}" обновлены')
-            elif brand == 'Ташир':
-                soup_tashir = update_url_cities_tashir()
-                write_file_urls(soup_tashir, brand)
-                print(f'Города бренда "{brand}" обновлены')
-            elif brand == 'Томато':
-                soup_tomato = update_url_cities_tomato()
-                write_file_urls(soup_tomato, brand)
-                print(f'Города бренда "{brand}" обновлены')
+        update_cities_for_brands()
     elif input_message.lower() == 'n':
         list_brands = choose_brand()
-        city_for_brand = get_city_for_brand(list_brands)
 
-    return city_for_brand
+    return get_city_for_brand(list_brands)
+
