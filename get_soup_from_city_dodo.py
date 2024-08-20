@@ -96,9 +96,6 @@ def parsing_dodo_pizza(brand: str, dodo_cities: list):
         load_table_brand(brand)
         brand_id = get_brand_id(brand)
 
-    percent = 100/len(dodo_cities)
-    count = 0
-
     for city in dodo_cities:
         city_id = get_city_id(city)
         if not city_id:
@@ -110,5 +107,3 @@ def parsing_dodo_pizza(brand: str, dodo_cities: list):
         file_name = create_file_html(brand, city)
         data_from_locality = get_data_from_locality_dodo(file_name)
         load_database_description_product_card(data_from_locality, brand_id, city_id)
-        count += percent
-        print(f'{count} %')
