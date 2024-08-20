@@ -7,15 +7,16 @@ from get_soup_from_city_tomato import parsing_tomato_pizza
 
 def main():
     brands = big_work_with_user()
+    print(brands)
 
-    for brand in brands:
-        for name_brand, cities in brand.items():
-            if name_brand == 'Додо':
-                parsing_dodo_pizza(name_brand, cities)
-            elif name_brand == 'Ташир':
-                parsing_tashir_pizza(name_brand, cities)
-            elif name_brand == 'Томато':
-                parsing_tomato_pizza(name_brand, cities)
+    for name_brand, cities in brands.items():
+        print(name_brand, cities)
+        # if name_brand == 'Додо':
+        #     parsing_dodo_pizza(name_brand, cities)
+        # elif name_brand == 'Ташир':
+        #     parsing_tashir_pizza(name_brand, cities)
+        # elif name_brand == 'Томато':
+        #     parsing_tomato_pizza(name_brand, cities)
 
 
 if __name__ == "__main__":
