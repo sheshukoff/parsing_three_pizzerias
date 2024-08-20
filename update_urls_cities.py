@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 def update_url_cities_dodo() -> BeautifulSoup:
@@ -17,8 +18,7 @@ def update_url_cities_dodo() -> BeautifulSoup:
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
-    driver = webdriver.Chrome()
-    # driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options)
+    driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=chrome_options)
     URL = "https://dodopizza.ru/voronezh"
 
     try:
@@ -28,7 +28,10 @@ def update_url_cities_dodo() -> BeautifulSoup:
         exit(1)
     time.sleep(5)
 
-    input_box = driver.find_element(By.XPATH, "//span//a")
+    input_box = driver.find_element(
+        By.XPATH,
+        "//a[@class='header__about-slogan-text header__about-slogan-text_locality header__about-slogan-text_link']"
+    )
     input_box.click()
 
     soup = BeautifulSoup(driver.page_source, "html.parser")
@@ -46,8 +49,7 @@ def update_url_cities_tashir() -> BeautifulSoup:
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--start-maximized")
 
-    driver = webdriver.Chrome(options=chrome_options)
-    # driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options)
+    driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=chrome_options)
     URL = "https://tashirpizza.ru/voronej"
 
     try:
@@ -75,8 +77,7 @@ def update_url_cities_tomato() -> BeautifulSoup:
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--start-maximized")
 
-    driver = webdriver.Chrome(options=chrome_options)
-    # driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options)
+    driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=chrome_options)
     URL = "https://www.tomato-pizza.ru/cities"
 
     try:
