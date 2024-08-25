@@ -94,11 +94,11 @@ def create_file_html(path_brand: str, city: str) -> list:
     return file_sections
 
 
-def parsing_tomato_pizza(brand, tomato_cities):
+def parsing_tomato_pizza(brand: str, city: str):
     """
     Функция загружает данные по Бренду, городам и продуктам в базу данных
     :param brand: str
-    :param tomato_cities: list
+    :param city: list
     """
 
     check_path(brand)
@@ -109,15 +109,14 @@ def parsing_tomato_pizza(brand, tomato_cities):
         load_table_brand(brand)
         brand_id = get_brand_id(brand)
 
-    for city in tomato_cities:
+    city_id = get_city_id(city)
+    if not city_id:
+        load_table_city(city)
         city_id = get_city_id(city)
-        if not city_id:
-            load_table_city(city)
-            city_id = get_city_id(city)
-        else:
-            update_date_product(brand_id, city_id)
+    else:
+        update_date_product(brand_id, city_id)
 
-        file_sections = create_file_html(brand, city)
-        for file_section in file_sections:
-            data_from_locality = get_data_from_locality_tomato(file_section)
-            load_database_description_product_card(data_from_locality, brand_id, city_id)
+    file_sections = create_file_html(brand, city)
+    for file_section in file_sections:
+        data_from_locality = get_data_from_locality_tomato(file_section)
+        load_database_description_product_card(data_from_locality, brand_id, city_id)

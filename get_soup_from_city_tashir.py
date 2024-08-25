@@ -81,11 +81,11 @@ def create_file_html(path_brand: str, city: str) -> str:
     return file_name
 
 
-def parsing_tashir_pizza(brand: str, tashir_cities: list):
+def parsing_tashir_pizza(brand: str, city: str):
     """
     Функция загружает данные по Бренду, городам и продуктам в базу данных
     :param brand: str
-    :param tashir_cities: list
+    :param city: list
     """
 
     check_path(brand)
@@ -96,14 +96,13 @@ def parsing_tashir_pizza(brand: str, tashir_cities: list):
         load_table_brand(brand)
         brand_id = get_brand_id(brand)
 
-    for city in tashir_cities:
+    city_id = get_city_id(city)
+    if not city_id:
+        load_table_city(city)
         city_id = get_city_id(city)
-        if not city_id:
-            load_table_city(city)
-            city_id = get_city_id(city)
-        else:
-            update_date_product(brand_id, city_id)
+    else:
+        update_date_product(brand_id, city_id)
 
-        file_name = create_file_html(brand, city)
-        data_from_locality = get_data_from_locality_tashir(file_name)
-        load_database_description_product_card(data_from_locality, brand_id, city_id)
+    file_name = create_file_html(brand, city)
+    data_from_locality = get_data_from_locality_tashir(file_name)
+    load_database_description_product_card(data_from_locality, brand_id, city_id)
