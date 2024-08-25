@@ -19,7 +19,7 @@ def split_array(choose_user_cities: list) -> list[list]:
 def progress_bar(brand: str):
     progress = html.Div(
         [
-            dcc.Interval(id="progress-interval", n_intervals=0, interval=1500),
+            dcc.Interval(id="progress-interval", n_intervals=0, interval=2000),
             dbc.Progress(id=f"{brand}-progress", color='#ffffff'),
         ]
     )
