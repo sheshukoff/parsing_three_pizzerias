@@ -7,12 +7,6 @@ from components_for_dash_table import get_data_pagination, get_total_page, split
 PAGE_SIZE = 15
 
 
-# previous_page = 1
-
-
-# сделать create_dash_table в data
-
-
 def init_dash_table(flask_app):
     dash_app = dash.Dash(__name__,
                          server=flask_app,
