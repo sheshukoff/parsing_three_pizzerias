@@ -1,6 +1,8 @@
 import dash_bootstrap_components as dbc
 from dash import html, Input, Output, ALL, State, dcc, no_update, set_props
 import dash
+from dash.long_callback import DiskcacheLongCallbackManager
+import diskcache
 from sort_cities import create_dash_table
 from components_for_dash_table import get_data_pagination, get_total_page, split_array
 
@@ -8,12 +10,15 @@ PAGE_SIZE = 15
 
 
 def init_dash_table(flask_app):
+    cache = diskcache.Cache("./cache")
+    long_callback_manager = DiskcacheLongCallbackManager(cache)
     dash_app = dash.Dash(__name__,
                          server=flask_app,
                          title="Checklist Test",
                          suppress_callback_exceptions=True,
                          external_stylesheets=[dbc.themes.SLATE],
-                         routes_pathname_prefix='/dash/'
+                         routes_pathname_prefix='/dash/',
+                         long_callback_manager=long_callback_manager
                          )
     return dash_app
 
