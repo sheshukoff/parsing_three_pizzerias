@@ -11,12 +11,15 @@ def main():
 
     for name_brand, cities in brands.items():
         print(name_brand, cities)
-        # if name_brand == 'Додо':
-        #     parsing_dodo_pizza(name_brand, cities)
-        # elif name_brand == 'Ташир':
-        #     parsing_tashir_pizza(name_brand, cities)
-        # elif name_brand == 'Томато':
-        #     parsing_tomato_pizza(name_brand, cities)
+        if name_brand == 'Додо':
+            for city in cities:
+                parsing_dodo_pizza(name_brand, city)
+        elif name_brand == 'Ташир':
+            for city in cities:
+                parsing_tashir_pizza(name_brand, city)
+        elif name_brand == 'Томато':
+            for city in cities:
+                parsing_tomato_pizza(name_brand, city)
 
 
 if __name__ == "__main__":
