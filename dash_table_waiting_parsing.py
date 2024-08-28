@@ -42,16 +42,27 @@ def init_dash_table_waiting_parsing(dash_app):
     #         pass
     #     elif brand == 'Томато':
     #         pass
-    @dash_app.callback(
-        Output('container-output-text', 'children'),
-        Input('table_for_waiting_parsing', 'children'),
-        [State('choose_cities_session', 'data'),
-         State('count_percent_session', 'data')]
+    @dash_app.long_callback(
+        output=Output("dodo-progress", "value"),
+        inputs=[Input('table_for_waiting_parsing', 'children')],
+        state=[State('choose_cities_session', 'data'),
+               State('count_percent_session', 'data')],
+        progress=Output("dodo-progress", "value"),
+        # Output('container-output-text', 'children'),
+        # Input('table_for_waiting_parsing', 'children'),
+        # [State('choose_cities_session', 'data'),
+        #  State('count_percent_session', 'data')]
     )
-    def processing_waiting_parsing(table, cities_for_parsing, count_percent):
-        print('processing_waiting_parsing', cities_for_parsing)
-        if count_percent is None:
-            count_percent = 0
+    def processing_waiting_parsing(update_progress, table, cities_for_parsing, count_percent_brand):
+        print('processing_waiting_parsing',
+              f"""
+              update_progress -> {update_progress}
+              table -> {table}
+              cities_for_parsing -> {cities_for_parsing}
+              count_percent_brand -> {count_percent_brand}
+              """)
+        if count_percent_brand is None:
+            count_percent_brand = brands = {'Додо': 0, 'Ташир': 0, 'Томато': 0}
 
         for brand, cities in cities_for_parsing.items():
             count_percent = create_counter(0)
@@ -61,8 +72,7 @@ def init_dash_table_waiting_parsing(dash_app):
             if percent_incremet == 100:
                 print(f"Парсинг {brand} - {percent_incremet}%")
                 print('63 row', f"{rename_brand}-progress")
-                set_props(f"{rename_brand}-progress", {'value': percent_incremet})
-                # change_set_props(percent_incremet, rename_brand)
+                update_progress(str(percent_incremet))
             for city in cities:
                 if is_last_element(city, cities):
                     now_percent = 100
@@ -70,12 +80,10 @@ def init_dash_table_waiting_parsing(dash_app):
                     now_percent = count_percent(percent_incremet)
 
                 print(f"Парсинг {brand} - {now_percent}%")
-                set_props(f"{rename_brand}-progress", {'value': now_percent})
-                # change_set_props(now_percent, rename_brand)
-
+                update_progress(str(now_percent))
                 time.sleep(3)
 
-        return 'Парсинг завершен. Нажмите на кнопку "Промежуточный итог"'
+        return [f"Clicked {button_1} times"]
 
     @dash_app.callback(
         Output('table_for_waiting_parsing', 'children'),
@@ -94,21 +102,21 @@ def init_dash_table_waiting_parsing(dash_app):
     # def(table, cities_for_parsing):
     #     print('')
 
-    @dash_app.callback(
-        Output("dodo-progress", "value"),
-        Input("progress-interval", 'n_interval'),
-    )
-    def timer(dodo_progress):
-        print('timer', dodo_progress)
-        if dodo_progress is None:
-            dodo_progress = 0
-
-        progress = min(dodo_progress % 110, 100)
-
-        if progress == 100:
-            return 100
-
-        return progress
+    # @dash_app.callback(
+    #     Output("dodo-progress", "value"),
+    #     Input("progress-interval", 'n_interval'),
+    # )
+    # def timer(dodo_progress):
+    #     print('timer', dodo_progress)
+    #     if dodo_progress is None:
+    #         dodo_progress = 0
+    #
+    #     progress = min(dodo_progress % 110, 100)
+    #
+    #     if progress == 100:
+    #         return 100
+    #
+    #     return progress
 
     # @dash_app.callback(
     #     Input()
@@ -129,35 +137,35 @@ def init_dash_table_waiting_parsing(dash_app):
     #         brand = 'dodo'
     #     value += 5
 
-    @dash_app.callback(
-        [Input("dodo-progress", "value"),
-         Input("tashir-progress", "value"),
-         Input("tomato-progress", "value"),
-         Input("progress-interval", 'n_interval'),
-         Input("progress-interval", 'disabled')],
-        prevent_initial_call=True,
-    )
-    def change_progress_bar(dodo_value, tahir_value, tomato_value, _, disabled):
-        if ctx.triggered_id == "dodo-progress":
-            value = dodo_value
-            brand = 'dodo'
-        elif ctx.triggered_id == "tashir-progress":
-            value = tahir_value
-            brand = 'tashir'
-        elif ctx.triggered_id == "tomato-progress":
-            value = tomato_value
-            brand = 'tomato'
-        else:
-            raise PreventUpdate
-
-        print('change_progress_bar', value)
-        # if brand is None:
-        #     brand = 'dodo'
-        # value += 5
-
-        if value <= 100:
-            change_set_props(value, brand)
-            print('change_set_props', value)
+    # @dash_app.callback(
+    #     [Input("dodo-progress", "value"),
+    #      Input("tashir-progress", "value"),
+    #      Input("tomato-progress", "value"),
+    #      Input("progress-interval", 'n_interval'),
+    #      Input("progress-interval", 'disabled')],
+    #     prevent_initial_call=True,
+    # )
+    # def change_progress_bar(dodo_value, tahir_value, tomato_value, _, disabled):
+    #     if ctx.triggered_id == "dodo-progress":
+    #         value = dodo_value
+    #         brand = 'dodo'
+    #     elif ctx.triggered_id == "tashir-progress":
+    #         value = tahir_value
+    #         brand = 'tashir'
+    #     elif ctx.triggered_id == "tomato-progress":
+    #         value = tomato_value
+    #         brand = 'tomato'
+    #     else:
+    #         raise PreventUpdate
+    #
+    #     print('change_progress_bar', value)
+    #     # if brand is None:
+    #     #     brand = 'dodo'
+    #     # value += 5
+    #
+    #     if value <= 100:
+    #         change_set_props(value, brand)
+    #         print('change_set_props', value)
 
         # else:
         # if brand == 'dodo':
@@ -187,6 +195,7 @@ def init_dash_table_waiting_parsing(dash_app):
             dcc.Store(id='count_percent_session', storage_type='session'),
             dbc.Table(id='table_for_waiting_parsing'),
             html.Div(id='container-output-text', children='Парсинг завершен. Нажмите на кнопку "Промежуточный итог"'),
+            # html.Button('Начать парсинг', id='begin-parsing'),
             html.Button('Промежуточный итог', id='subtotal-input'),
         ],
         className="table-pagination",
