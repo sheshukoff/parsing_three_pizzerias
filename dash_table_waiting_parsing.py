@@ -27,63 +27,57 @@ def init_dash_table_waiting_parsing(dash_app):
             return True
         return False
 
-    def redefinition_brand(any_brand):
-        brands = {'Додо': 'dodo', 'Ташир': 'tashir', 'Томато': 'tomato'}
-        return brands[any_brand]
+    def get_tuple_values(brands_values: dict) -> tuple[str, str, str]:
+        return str(brands_values['Додо']), str(brands_values['Ташир']), str(brands_values['Томато'])
 
-    # for brand, cities in cities_for_parsing.items():
-    #     if brand == 'Додо':
-    #         dodo_brand = parsing_any_brand(brand)
-    #         percent_incremet = calculate_percent(cities)
-    #         print(dodo_brand, percent_incremet)
-    #         if percent_incremet == 100:
-    #             change_set_props(percent_incremet, dodo_brand)
-    #     elif brand == 'Ташир':
-    #         pass
-    #     elif brand == 'Томато':
-    #         pass
+    def update_percent_brand(brand: str, brands_values: dict, percent: int) -> tuple:
+        # if brand == 'Додо':
+        #     count_percent_brand[brand] = percent
+        # elif brand == 'Ташир':
+        #     count_percent_brand[brand] = percent
+        # elif brand == 'Томато':
+        #     count_percent_brand[brand] = percent
+
+        return brands_values['Додо'], brands_values['Ташир'], brands_values['Томато']
+
     @dash_app.long_callback(
-        output=Output("dodo-progress", "value"),
         inputs=[Input('table_for_waiting_parsing', 'children')],
         state=[State('choose_cities_session', 'data'),
                State('count_percent_session', 'data')],
-        progress=Output("dodo-progress", "value"),
-        # Output('container-output-text', 'children'),
-        # Input('table_for_waiting_parsing', 'children'),
-        # [State('choose_cities_session', 'data'),
-        #  State('count_percent_session', 'data')]
+        progress=[Output("dodo-progress", "value"),
+                  Output("tashir-progress", "value"),
+                  Output("tomato-progress", "value")]
     )
-    def processing_waiting_parsing(update_progress, table, cities_for_parsing, count_percent_brand):
+    def processing_waiting_parsing(update_progress, table, cities_for_parsing, brands_values):
         print('processing_waiting_parsing',
               f"""
               update_progress -> {update_progress}
               table -> {table}
               cities_for_parsing -> {cities_for_parsing}
-              count_percent_brand -> {count_percent_brand}
+              count_percent_brand -> {brands_values}
               """)
-        if count_percent_brand is None:
-            count_percent_brand = brands = {'Додо': 0, 'Ташир': 0, 'Томато': 0}
+        if brands_values is None:
+            brands_values = {'Додо': 0, 'Ташир': 0, 'Томато': 0}
 
         for brand, cities in cities_for_parsing.items():
             count_percent = create_counter(0)
             percent_incremet = calculate_percent(cities)
-            rename_brand = redefinition_brand(brand)
 
             if percent_incremet == 100:
-                print(f"Парсинг {brand} - {percent_incremet}%")
-                print('63 row', f"{rename_brand}-progress")
-                update_progress(str(percent_incremet))
+                brands_values[brand] = percent_incremet
+                update_progress(get_tuple_values(brands_values))
+
             for city in cities:
-                if is_last_element(city, cities):
+                time.sleep(3)  # парсинг "Функция"
+                if is_last_element(city, cities):  # можно сделать функицю "Обновление прогресс бара"
                     now_percent = 100
+                    print('70 row', now_percent)
                 else:
                     now_percent = count_percent(percent_incremet)
+                print(brand, now_percent)
 
-                print(f"Парсинг {brand} - {now_percent}%")
-                update_progress(str(now_percent))
-                time.sleep(3)
-
-        return [f"Clicked {button_1} times"]
+                brands_values[brand] = now_percent
+                update_progress(get_tuple_values(brands_values))
 
     @dash_app.callback(
         Output('table_for_waiting_parsing', 'children'),
@@ -167,24 +161,20 @@ def init_dash_table_waiting_parsing(dash_app):
     #         change_set_props(value, brand)
     #         print('change_set_props', value)
 
-        # else:
-        # if brand == 'dodo':
-        #     brand = 'tashir'
-        # elif brand == 'tashir':
-        #     brand = 'tomato'
-        # elif brand == 'tomato':
-        #     brand = None
+    # else:
+    # if brand == 'dodo':
+    #     brand = 'tashir'
+    # elif brand == 'tashir':
+    #     brand = 'tomato'
+    # elif brand == 'tomato':
+    #     brand = None
 
-        # if brand is None:
-        #     set_props("progress-interval", {'disabled': True})
-        # else:
-        #     print(brand)
-        #     set_props('now_brand_session', {'data': brand})
-        #     set_props(f"{brand}-progress", {'value': 0})
-
-    def change_set_props(value, brand):
-        set_props(f'{brand}-progress', {'value': value})
-        set_props(f"{brand}-progress", {'label': f'{value}%'})
+    # if brand is None:
+    #     set_props("progress-interval", {'disabled': True})
+    # else:
+    #     print(brand)
+    #     set_props('now_brand_session', {'data': brand})
+    #     set_props(f"{brand}-progress", {'value': 0})
 
     # сделать set_props обычной функцией
 
@@ -194,8 +184,6 @@ def init_dash_table_waiting_parsing(dash_app):
             dcc.Store(id='choose_cities_session', storage_type='session'),
             dcc.Store(id='count_percent_session', storage_type='session'),
             dbc.Table(id='table_for_waiting_parsing'),
-            html.Div(id='container-output-text', children='Парсинг завершен. Нажмите на кнопку "Промежуточный итог"'),
-            # html.Button('Начать парсинг', id='begin-parsing'),
             html.Button('Промежуточный итог', id='subtotal-input'),
         ],
         className="table-pagination",
