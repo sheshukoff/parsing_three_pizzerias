@@ -9,7 +9,12 @@ from components_for_dash_table import get_data_pagination, get_total_page, split
 PAGE_SIZE = 15
 
 
-def init_dash_table(flask_app):
+def init_dash_table(flask_app: bool) -> object:
+    """
+    Функция инициализирует dash app
+    :param flask_app: bool
+    :return: object
+    """
     cache = diskcache.Cache("./cache")
     long_callback_manager = DiskcacheLongCallbackManager(cache)
     dash_app = dash.Dash(__name__,
@@ -31,7 +36,13 @@ def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_
         Input('table', 'children'),  # выбрал стрницу
         State('pagination', 'active_page')
     )
-    def previous_page_session(number_page: int, active_page: int):
+    def previous_page_session(number_page: int, active_page: int) -> int:
+        """
+        Функция возвращает предыдущую страницу (в сессии браузера)
+        :param number_page: int
+        :param active_page: int
+        :return: int
+        """
         if active_page is None:
             active_page = 1
 
@@ -47,7 +58,20 @@ def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_
          State({'type': 'dynamic-switch', 'index': ALL}, 'value'),
          State('previous_page_session', 'data')]  # считал данные
     )
-    def choose_brand_and_cities(active_page: int, create_table, choose_user_cities: list, previous_page):
+    def choose_brand_and_cities(
+        active_page: int,
+        create_table: list,
+        choose_user_cities: list,
+        previous_page: int
+    ) -> list:
+        """
+        Функция возвращает выбранные бренды и города пользователем (в сессии браузера)
+        :param active_page: int
+        :param create_table: list
+        :param choose_user_cities: list
+        :param previous_page: int
+        :return: list
+        """
         if create_table is None:
             create_table = data
 
@@ -68,12 +92,18 @@ def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_
         return create_table
 
     @dash_app.callback(
-        Output('table', 'children'),  # записал таблицу
-        Input('dash_table_session', 'data'),  # выбрал страницу
-        State('pagination', 'active_page')  # считал данные
+        Output('table', 'children'),
+        Input('dash_table_session', 'data'),
+        State('pagination', 'active_page')
     )
-    def table_pagination(create_table, number_page):  # сборка таблицы, возвращаю таблицу
-        active_page = 1 if not number_page else int(number_page)  # нужна активная страница
+    def table_pagination(create_table: list, number_page: int) -> object:
+        """
+        Функция строит таблицу (в сессии браузера)
+        :param create_table: list
+        :param number_page: int
+        :return: object
+        """
+        active_page = 1 if not number_page else int(number_page)
         print('86 table_pagination', active_page)
 
         if create_table is None:
@@ -86,7 +116,12 @@ def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_
         table = get_data_pagination(part_table)
         return table
 
-    def any_toggle_switches(create_table):
+    def any_toggle_switches(create_table: list) -> bool:
+        """
+        Функция проверяет включен ли хоть один переключатель
+        :param create_table: list
+        :return: bool
+        """
         dodo_values = [city['dodo_value'] for city in create_table]
         tashir_values = [city['tashir_value'] for city in create_table]
         tomato_values = [city['tomato_value'] for city in create_table]
@@ -94,7 +129,12 @@ def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_
 
         return True in all_switches
 
-    def get_cities_for_parsing(create_table):
+    def get_cities_for_parsing(create_table: list) -> dict:
+        """
+        Функция возвращает города для парсинга
+        :param create_table: list
+        :return: dict
+        """
         dodo_city = [city['city'] for city in create_table if city['dodo_value'] is True]
         tashir_city = [city['city'] for city in create_table if city['tashir_value'] is True]
         tomato_city = [city['city'] for city in create_table if city['tomato_value'] is True]
@@ -111,7 +151,24 @@ def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_
          State('pagination', 'active_page')],
         prevent_initial_call=True
     )
-    def url_router(button, url_address, create_table, choose_user_cities, previous_page, active_page):
+    def url_router(
+            button: int,
+            url_address: str,
+            create_table: list,
+            choose_user_cities: list,
+            previous_page: int,
+            active_page: int
+    ) -> str:
+        """
+        Функция возвращает url address
+        :param button: int
+        :param url_address: str
+        :param create_table: list
+        :param choose_user_cities: list
+        :param previous_page: int
+        :param active_page: int
+        :return: str
+        """
         print('url_router', button, url_address)
         if button:
             if url_address == '/dash/page_input':
@@ -129,7 +186,13 @@ def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_
         Input('subtotal-input', 'n_clicks'),
         State('url', 'pathname')
     )
-    def url_router_2(button, url_address):
+    def url_router_2(button: int, url_address: str) -> str:
+        """
+        Функция возвращает url address
+        :param button: int
+        :param url_address: str
+        :return: str
+        """
         print('url_router_2', button, url_address)
         if button:
             if url_address == '/dash/page_waiting_parsing':
@@ -141,7 +204,12 @@ def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_
         Output('page-content', 'children'),
         Input('url', 'pathname'),
     )
-    def return_dash_layout(pathname):
+    def return_dash_layout(pathname: str) -> object | str:
+        """
+        Функция возвращает страницу пользователю
+        :param pathname: str
+        :return: object | str
+        """
         print('return_dash_layout()')
         if pathname == '/dash/page_input':
             return page_input
@@ -174,6 +242,3 @@ def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_
         ],
         className="table-pagination",
     )
-
-#  'url', 'pathname' -> State ('dash_table_session') -> 'table' 'children'
-#  делаю таблицу в companents_for_dash_table
