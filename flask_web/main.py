@@ -4,6 +4,7 @@ from flask_bcrypt import Bcrypt
 
 from create_table import session, Authorized_users
 from write_query_sql import search_password, recieve_user_login, load_table_authorized_users
+from dash import Input, Output, html, dcc
 
 from dash_table_input import init_dash_table, init_dash_table_input, PAGE_SIZE
 from dash_table_output import init_dash_table_output
@@ -98,7 +99,7 @@ if __name__ == "__main__":
 
 
     @login_manager.user_loader
-    def loader_user(user_id):
+    def loader_user(user_id):  # TODO переместить к остальным функциям (Flask)
         print("================ loader_user ==================")
         return session.get(Authorized_users, user_id)
 
@@ -109,8 +110,37 @@ if __name__ == "__main__":
     flask_app.add_url_rule("/" "log_out", log_out, methods=["GET", "POST"])
 
     dash_app = init_dash_table(flask_app)
+
+    dash_app.layout = html.Div([
+        dcc.Location(id='url', refresh=False),
+        html.Div(id='page-content'),
+    ])
+
+    @dash_app.callback(
+        Output('page-content', 'children'),
+        Input('url', 'pathname'),
+    )
+    def return_dash_layout(pathname: str) -> object | str:  # TODO переместить к остальным функциям (DASH)
+        """
+        Функция возвращает страницу пользователю
+        :param pathname: str
+        :return: object | str
+        """
+        print('return_dash_layout()')
+        if pathname == '/dash/page_input':
+            return page_input
+        elif pathname == '/dash/page_waiting_parsing':
+            return dash_table_waiting_parsing
+        elif pathname == '/dash/page_output':
+            return dash_page_output
+        else:
+            return '404'
+
+    page_input = init_dash_table_input(dash_app, PAGE_SIZE)
+    dash_table_waiting_parsing = init_dash_table_waiting_parsing(dash_app)
     dash_page_output = init_dash_table_output()
-    dash_table_waiting_parsing = init_dash_table_waiting_parsing(dash_app)  #
-    init_dash_table_input(dash_app, PAGE_SIZE, dash_table_waiting_parsing, dash_page_output)
 
     flask_app.run()
+
+
+# ускорить загрузку в базу данных
