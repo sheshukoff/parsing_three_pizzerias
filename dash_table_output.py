@@ -2,7 +2,11 @@ from create_table_sql import Brand, City, Section, Product, session
 from dash import html, dash_table
 
 
-def init_dash_table_output():
+def init_dash_table_output() -> object:
+    """
+    Функция стоит таблицу промежуточный итог (page_output)
+    :return: object
+    """
     get_table = (session.query(
         Brand.name, City.name, Section.name, Product.name, Product.description, Product.new_price, Product.old_price
     ).join(Brand).join(City).join(Section)).all()
@@ -86,7 +90,7 @@ def init_dash_table_output():
                     {'if': {'column_id': 'Название продукта'},
                      'width': '10%'},
                     {'if': {'column_id': 'Описание'},
-                     'width': '65%'},
+                     'width': '30%'},
                     {'if': {'column_id': 'Новая цена'},
                      'width': '5%'},
                     {'if': {'column_id': 'Старая цена'},

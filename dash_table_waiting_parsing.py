@@ -1,3 +1,5 @@
+import time
+
 from dash import html, Input, Output, dcc, State
 import dash_bootstrap_components as dbc
 from components_for_dash_table import waiting_parsing
@@ -83,7 +85,7 @@ def init_dash_table_waiting_parsing(dash_app):
                   Output("tomato-progress", "value"),
                   Output("tomato-progress", "label")]
     )
-    def processing_waiting_parsing(update_progress, table: list, cities_for_parsing: int, brands_values: dict):
+    def processing_waiting_parsing(update_progress, table: list, cities_for_parsing: dict, brands_values: dict):
         """
         Функция (здесь происходит ожидание парсинга)
         :param update_progress:
@@ -103,8 +105,8 @@ def init_dash_table_waiting_parsing(dash_app):
                 update_progress(get_tuple_values(brands_values))
 
             for city in cities:
-                parsing = definition_parsing(brand)
-                parsing(brand, city)
+                # parsing = definition_parsing(brand)
+                # parsing(brand, city)
 
                 if is_last_element(city, cities):  # можно сделать функицю "Обновление прогресс бара"
                     now_percent = 100
@@ -115,6 +117,7 @@ def init_dash_table_waiting_parsing(dash_app):
 
                 brands_values[brand] = now_percent
                 update_progress(get_tuple_values(brands_values))
+            time.sleep(2)
 
     @dash_app.callback(
         Output('table_for_waiting_parsing', 'children'),

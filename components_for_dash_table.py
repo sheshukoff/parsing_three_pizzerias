@@ -4,6 +4,11 @@ from dash import dcc
 
 
 def split_array(choose_user_cities: list) -> list[list]:
+    """
+    Функция разбивает список на три элемента, (возвращает список)
+    :param choose_user_cities: list
+    :return: list
+    """
     split_choose_user = []
     index = 0
 
@@ -16,7 +21,12 @@ def split_array(choose_user_cities: list) -> list[list]:
     return split_choose_user
 
 
-def progress_bar(brand: str):
+def progress_bar(brand: str) -> object:
+    """
+    Функция возвращает объект прогресс бар
+    :param brand: str
+    :return: object
+    """
     progress = html.Div(
         [
             dcc.Interval(id="progress-interval", n_intervals=0, interval=2000),
@@ -26,10 +36,15 @@ def progress_bar(brand: str):
 
     return progress
 
-#  https://codepen.io/traf/pen/oKbaqQ
-
 
 def check_toggle_switch(type_boolean: bool, id_str: str, value: bool) -> object:
+    """
+    Функция проверяет включен ли переключатель
+    :param type_boolean: str
+    :param id_str: str
+    :param value: bool
+    :return: object
+    """
     if type_boolean is True:
         return html.Div(
             [
@@ -57,6 +72,12 @@ def check_toggle_switch(type_boolean: bool, id_str: str, value: bool) -> object:
 
 
 def get_total_page(page_size: int, total_data: int) -> int:
+    """
+    Функция возращает количество страниц
+    :param page_size: int
+    :param total_data: int
+    :return: int
+    """
     data_div_page_size = total_data // page_size
     data_mod_page_size = total_data % page_size
     total_page = data_div_page_size if data_mod_page_size == 0 else (data_div_page_size + 1)
@@ -64,7 +85,12 @@ def get_total_page(page_size: int, total_data: int) -> int:
     return total_page
 
 
-def get_data_pagination(part_table) -> object:
+def get_data_pagination(part_table: list) -> object:
+    """
+    Функция стоит таблицу выбора бренда и городов (page_input)
+    :param part_table: list
+    :return: object
+    """
     table_header = [
         html.Thead(
             html.Tr([
@@ -97,6 +123,10 @@ def get_data_pagination(part_table) -> object:
 
 
 def waiting_parsing() -> object:
+    """
+    Функция стоит таблицу ожидание парсинга (waiting_parsing)
+    :return: object
+    """
     table_header = [
         html.Thead(
             html.Tr([

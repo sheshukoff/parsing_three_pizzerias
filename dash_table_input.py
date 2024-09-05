@@ -9,7 +9,7 @@ from components_for_dash_table import get_data_pagination, get_total_page, split
 PAGE_SIZE = 15
 
 
-def init_dash_table(flask_app: bool) -> object:
+def init_dash_table(flask_app):
     """
     Функция инициализирует dash app
     :param flask_app: bool
@@ -28,7 +28,7 @@ def init_dash_table(flask_app: bool) -> object:
     return dash_app
 
 
-def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_page_output):
+def init_dash_table_input(dash_app, page_size):
     data = create_dash_table()
 
     @dash_app.callback(
@@ -200,30 +200,30 @@ def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_
 
         return no_update
 
-    @dash_app.callback(
-        Output('page-content', 'children'),
-        Input('url', 'pathname'),
-    )
-    def return_dash_layout(pathname: str) -> object | str:
-        """
-        Функция возвращает страницу пользователю
-        :param pathname: str
-        :return: object | str
-        """
-        print('return_dash_layout()')
-        if pathname == '/dash/page_input':
-            return page_input
-        elif pathname == '/dash/page_waiting_parsing':
-            return dash_table_waiting_parsing
-        elif pathname == '/dash/page_output':
-            return dash_page_output
-        else:
-            return '404'
+    # @dash_app.callback(
+    #     Output('page-content', 'children'),
+    #     Input('url', 'pathname'),
+    # )
+    # def return_dash_layout(pathname: str) -> object | str:
+    #     """
+    #     Функция возвращает страницу пользователю
+    #     :param pathname: str
+    #     :return: object | str
+    #     """
+    #     print('return_dash_layout()')
+    #     if pathname == '/dash/page_input':
+    #         return page_input
+    #     elif pathname == '/dash/page_waiting_parsing':
+    #         return dash_table_waiting_parsing
+    #     elif pathname == '/dash/page_output':
+    #         return dash_page_output
+    #     else:
+    #         return '404'
 
-    dash_app.layout = html.Div([
-        dcc.Location(id='url', refresh=False),
-        html.Div(id='page-content'),
-    ])
+    # dash_app.layout = html.Div([
+    #     dcc.Location(id='url', refresh=False),
+    #     html.Div(id='page-content'),
+    # ])
 
     page_input = html.Div(
         children=[
@@ -242,3 +242,5 @@ def init_dash_table_input(dash_app, page_size, dash_table_waiting_parsing, dash_
         ],
         className="table-pagination",
     )
+
+    return page_input

@@ -1,7 +1,11 @@
 from working_with_the_user import find_url_cities_dodo, find_url_cities_tashir, find_url_cities_tomato
 
 
-def search_brand_on_cities():
+def search_brand_on_cities() -> dict:
+    """
+    Функция возврвщает наличие бренда в городах
+    :return: object
+    """
     cities_dodo = find_url_cities_dodo()
     cities_tashir = find_url_cities_tashir()
     cities_tomato = find_url_cities_tomato()
@@ -51,7 +55,11 @@ def search_brand_on_cities():
 
 
 def sorted_cities(brand_cities: dict) -> dict:
-
+    """
+    Функция сортирует города
+    :param brand_cities: list
+    :return: dict
+    """
     sort_cities = {}
 
     temp = {}
@@ -102,13 +110,21 @@ def sorted_cities(brand_cities: dict) -> dict:
     return sort_cities
 
 
-def sorted_brand_and_cities():
+def sorted_brand_and_cities() -> dict:
+    """
+    Функция возвращает отсортированный словарь городов
+    :return: dict
+    """
     brand_and_cities = search_brand_on_cities()
     sort_cities = sorted_cities(brand_and_cities)
     return sort_cities
 
 
-def create_dash_table():
+def create_dash_table() -> list:
+    """
+    Функция возвращает список брендов и городов (для frontend'a)
+    :return: list
+    """
     data_frame = sorted_brand_and_cities()
 
     data = []
