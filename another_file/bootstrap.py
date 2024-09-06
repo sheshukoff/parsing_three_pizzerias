@@ -1,65 +1,55 @@
-import time
-import dash
-from dash import html, Input, Output, State
-from dash.long_callback import DiskcacheLongCallbackManager
+from dash import Dash, html, dcc, no_update
+from dash.dependencies import Input, Output
+from test import flask_app
 
-## Diskcache
-import diskcache
+dash_app = Dash(__name__, server=flask_app, routes_pathname_prefix='/dash/')
 
-cache = diskcache.Cache("./cache")
-long_callback_manager = DiskcacheLongCallbackManager(cache)
 
-app = dash.Dash(__name__, long_callback_manager=long_callback_manager)
-
-app.layout = html.Div(
-    [
-        html.Div(
-            [
-                html.P(id="paragraph_id", children=["Button not clicked"]),
-                html.Progress(id="progress_bar"),
-            ]
-        ),
-        html.Button(id="button_id", children="Run Job!"),
-    ]
+@dash_app.callback(
+    Output('url', 'pathname'),
+    [Input('page-2-button', 'n_clicks')],
+    prevent_initial_call=True
 )
+def go_to_page_3(n_clicks):
+    print('go_to_page_3()')
+    if n_clicks and n_clicks > 2:
+        return '/dash/page3'
+    else:
+        return no_update
 
 
-# @app.long_callback(
-#     output=Output("optimize-result", "children"),
-#     inputs=dict(number_clicks=Input("optimize-button-id", "n_clicks")),
-#     state=dict(
-#         reorder_period=State("reorder-period-dropdown-id", "value"),
-#         forecast=State("forecast-dropdown-id", "value")
-#     ),
-#     running=[
-#         (Output("optimize-button-id", "disabled"), True, False),
-#     ],
-#     prevent_initial_call=True,
-# )
-# def load_optimize_data_button_click(number_clicks, reorder_period, forecast):
-#     pass
-
-
-@app.long_callback(
-    output=Output("paragraph_id", "children"),
-    inputs=Input("button_id", "n_clicks"),
-    state=State("paragraph_id", "children"),
-    # state=dict(
-    #     reorder_period=State("paragraph_id", "children")
-    # ),
-    progress=[Output("progress_bar", "value")]
+@dash_app.callback(
+    Output('page-content', 'children'),
+    [Input('url', 'pathname')]
 )
-def callback(update_progress, state_a, number_clicks):
-    print(update_progress, state_a, number_clicks)
-    total = 10
-    for i in range(total):
-        time.sleep(0.5)
-        update_progress((str(i + 1)))
-    return [f"Clicked {number_clicks} times"]
+def return_dash_layout(pathname):
+    print('return_dash_layout()')
+    if pathname == '/dash/page2':
+        return page_2_layout
+    elif pathname == '/dash/page3':
+        return page_3_layout
+    else:
+        return '404'
 
 
-# input
+page_2_layout = html.Div([
+    html.H1('Страница 2'),
+    html.Table([
+        html.Tr([html.Td('Ячейка 1'), html.Td('Ячейка 2')]),
+        html.Tr([html.Td('Ячейка 3'), html.Td('Ячейка 4')])
+    ]),
+    html.Button('Далее', id='page-2-button')
+])
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+page_3_layout = html.Div([
+    html.H1('Страница 3'),
+    html.Table([
+        html.Tr([html.Td('Клетка A'), html.Td('Клетка B')]),
+        html.Tr([html.Td('Клетка C'), html.Td('Клетка D')])
+    ]),
+    html.A(html.Button('Далее'), href='/page4')
+])
+
+
+

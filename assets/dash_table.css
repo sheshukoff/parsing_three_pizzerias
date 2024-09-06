@@ -1,0 +1,163 @@
+
+/* заголовок таблицы */
+.header {
+    font-family: Lobster;
+    text-align: center;
+}
+
+
+
+/* ячейка заголовка Города */
+#header-city {
+    width: 30%;
+    text-transform: uppercase;
+}
+
+/* ячейка заголовка Додо */
+#header-dodo {
+    width: 10%;
+    text-transform: uppercase;
+}
+
+/* ячейка заголовка Ташир */
+#header-tashir {
+    width: 10%;
+    text-transform: uppercase;
+}
+
+/* ячейка заголовка Томато */
+#header-tomato {
+    width: 10%;
+    text-transform: uppercase;
+}
+
+
+
+/* ячейка города */
+#city-cell {
+    width: 30%;
+    font-size: 16px;
+}
+
+/* ячейка Додо */
+#dodo-cell {
+    width: 10%;
+}
+
+/* ячейка Ташир */
+#tashir-cell {
+    width: 10%;
+}
+
+/* ячейка Томато */
+#tomato-cell {
+    width: 10%;
+}
+
+
+
+/* расположение пагинации */
+#pagination {
+    position: relative;
+    left: 800px;
+    top: -20px;
+}
+
+/* таблица вместе с пагинацией */
+.table-pagination {
+   width: 70%;
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+}
+
+
+/* переключатели */
+input[type=checkbox] {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+}
+
+label {
+    left: 35%;
+    transform: translate(-50%, 0%);
+    cursor: pointer;
+    text-indent: -9999px;
+    width: 45px;
+    height: 23px;
+    background: grey;
+    display: block;
+    border-radius: 100px;
+    position: relative;
+}
+
+label:after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-radius: 90px;
+  transition: 0.3s;
+}
+
+input:checked + label {
+  background: #bada55;
+}
+
+input:checked + label:after {
+  left: calc(100% - 5px);
+  transform: translateX(-100%);
+}
+
+label:active:after {
+  width: 20px;
+}
+
+
+/* кнопка "Отрпавить на парсинг" */
+#page-input-button {
+    font-family: Lobster;
+    position: relative;
+    color: #fff;
+    background-color: #212529;
+    border-color: #212529;
+    left: 867px;
+    top: -10px;
+}
+
+/* Таблица 'Ожидание парсинга'" */
+#brand-cell {
+    width: 20%;
+}
+
+/* Кнопка 'Промежуточный итог'" */
+#subtotal-input {
+    position: relative;
+    font-family: Lobster;
+    color: #fff;
+    background-color: #212529;
+    border-color: #212529;
+    left: 900px;
+    top: -20px;
+}
+
+/* Пагинация (таблица Промежуточный итог) */
+.previous-next-container {
+    margin-top: -120px;
+    margin-left: 1300px;
+}
+
+#btn_xlsx {
+    position: relative;
+    font-family: Lobster;
+    color: #fff;
+    background-color: #212529;
+    border-color: #212529;
+    top: 10px;
+    left: 1370px;
+}

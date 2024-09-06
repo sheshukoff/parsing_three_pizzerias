@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>sign in</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for ('static', filename='sign_up.css')}}">
+</head>
+<body>
+    <div class="wrapper fadeInDown">
+        <div id="formContent">
+            <!-- Tabs Titles -->
+<!--            <h2 class="active"> Войти в систему </h2>-->
+            <h2 class="active"> Зарегистрироваться </h2>
+
+            <!-- Login Form -->
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <ul class=flashes>
+                {% for message in messages %}
+                  <h5>{{ message }}</h5>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+            <form method="POST">
+                <p>Login</p>
+                    <input type="text" class="input first" name="login" placeholder="login">
+                <p>Password</p>
+                    <input type="password" class="input second" name="password_first" placeholder="password">
+                <p>Repeat password</p>
+                    <input type="password" class="input third" name="password_second" placeholder="password">
+                    <input type="submit" class="button submit" value="Зарегистрироваться">
+            </form>
+
+            <!-- Remind Passowrd -->
+<!--            <div id="formFooter">-->
+<!--                <a class="underlineHover" href="#">Забыл пароль?</a>-->
+<!--            </div>-->
+        </div>
+    </div>
+</body>
