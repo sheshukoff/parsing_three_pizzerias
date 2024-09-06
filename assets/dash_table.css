@@ -145,3 +145,19 @@ label:active:after {
     left: 900px;
     top: -20px;
 }
+
+/* Пагинация (таблица Промежуточный итог) */
+.previous-next-container {
+    margin-top: -120px;
+    margin-left: 1300px;
+}
+
+#btn_xlsx {
+    position: relative;
+    font-family: Lobster;
+    color: #fff;
+    background-color: #212529;
+    border-color: #212529;
+    top: 10px;
+    left: 1370px;
+}
