@@ -207,4 +207,3 @@ def big_work_with_user() -> dict:
         list_brands = choose_brand()
 
     return get_city_for_brand(list_brands)
-
