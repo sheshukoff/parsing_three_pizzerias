@@ -1,5 +1,5 @@
 from create_table_sql import Brand, City, Section, Product, session
-from dash import html, dash_table
+from dash import html, dash_table, dcc
 
 
 def init_dash_table_output() -> object:
@@ -96,6 +96,8 @@ def init_dash_table_output() -> object:
                     {'if': {'column_id': 'Старая цена'},
                      'width': '5%'},
                 ],
-            )
+            ),
+            html.Button("Сохранить в Excel", id="btn_xlsx"),
+            dcc.Download(id="download-dataframe-xlsx"),
         ]
     )
