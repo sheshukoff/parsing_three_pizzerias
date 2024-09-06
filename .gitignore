@@ -160,4 +160,4 @@ cython_debug/
 #.idea/
 
 # добавил так как использовал для тестов
-another_file
+/another_file
