@@ -96,8 +96,6 @@ def load_table_brand(brand: str):
     result = insert_value.all()
     print(result)
 
-    session.commit()
-
 
 def load_table_city(name_city: str):
     """
@@ -114,8 +112,6 @@ def load_table_city(name_city: str):
     result = insert_value.all()
     print(result)
 
-    session.commit()
-
 
 def load_table_section(name_section: str):
     """
@@ -131,8 +127,6 @@ def load_table_section(name_section: str):
     insert_value = session.scalars(insert(Section).returning(Section), insert_section)
     result = insert_value.all()
     print(result)
-
-    session.commit()
 
 
 def load_database_description_product_card(data_from_locality: dict[list[dict]], brand_id: int, city_id: int):
