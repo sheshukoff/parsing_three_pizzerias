@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Integer, String, Column, ForeignKey, SmallInteger
+from sqlalchemy import create_engine, Integer, String, Column, ForeignKey, SmallInteger, DATE
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 from dotenv import dotenv_values
@@ -49,6 +49,7 @@ class Product(Base):
     brand_id = Column(Integer, ForeignKey("brand.id"))
     city_id = Column(Integer, ForeignKey("city.id"))
     section_id = Column(Integer, ForeignKey("section.id"))
+    date = Column(DATE, nullable=False)
 
     def __repr__(self):
         return f"Product id={self.id}, name={self.name}, description={self.description}, new_price={self.new_price}"
