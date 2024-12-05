@@ -1,6 +1,15 @@
 from bs4 import BeautifulSoup
 
 
+def is_digit(div):
+    new_price = ''
+    for symbol in div:
+        if symbol.isdigit():
+            new_price += symbol
+
+    return new_price
+
+
 def get_name(div: BeautifulSoup) -> str:
     """
     Функция возвращает название продукта
@@ -25,26 +34,33 @@ def get_description(main: BeautifulSoup) -> str | None:
     return description
 
 
-def get_price(div: BeautifulSoup) -> str:
+def get_new_price(div_new_price) -> str | None:
     """
-    Функция возращает цену.
-    :param div: BeautifulSoup
-    :return: str
+    Функция возращает новую цену.
+    param div: BeautifulSoup
+    return: None | int
     """
-    return div.text.strip()
+    if div_new_price is None:
+        return None
+    new_price = div_new_price.text.strip().split('₽')
+
+    if 'от' in new_price:
+        return is_digit(new_price[1])
+
+    return is_digit(new_price[0])
 
 
-def get_new_and_old_prices(div: BeautifulSoup) -> tuple:
+def get_old_price(div_old_price) -> str | None:
     """
-    Функция возращает новую и страрую цену.
-    :param div: BeautifulSoup
-    :return: tuple
+    Функция возращает старую цену.
+    param div: BeautifulSoup
+    return: str
     """
-    get_old_price = div.div.extract()
-    old_price = get_old_price.text.strip()
 
-    new_price = div.text.strip()
-    return new_price, old_price
+    if div_old_price is None:
+        return None
+    old_price = div_old_price.text.strip()
+    return is_digit(old_price[:-1])
 
 
 def get_product_data(product_card: BeautifulSoup) -> dict:
@@ -67,12 +83,16 @@ def get_product_data(product_card: BeautifulSoup) -> dict:
     description = get_description(main)
 
     footer = article.footer
-    div_price = footer.find("div", {"class": "product-control-price"})
 
-    if div_price.div is None:
-        new_price = get_price(div_price)
+    div_price = footer.find("div", {"class": "product-control-price"})
+    if div_price:
+        div_new_price = footer.find("div", {"class": "product-control-price"})
+        div_old_price = footer.find("div", {"class": "product-control-oldprice"})
+        new_price = get_new_price(div_new_price)
+        old_price = get_old_price(div_old_price)
     else:
-        new_price, old_price = get_new_and_old_prices(div_price)
+        div_new_price = footer.text.strip()
+        new_price = is_digit(div_new_price)
 
     description_card_product = {
         "name": name,
