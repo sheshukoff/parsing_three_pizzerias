@@ -182,9 +182,10 @@ def init_dash_table_input(dash_app, page_size):
         return no_update
 
     @dash_app.callback(
-        Output('url', 'pathname'),
+        Output('url', 'pathname',  allow_duplicate=True),
         Input('subtotal-input', 'n_clicks'),
-        State('url', 'pathname')
+        State('url', 'pathname'),
+        prevent_initial_call=True
     )
     def url_router_2(button: int, url_address: str) -> str:
         """
@@ -199,31 +200,6 @@ def init_dash_table_input(dash_app, page_size):
                 return '/dash/page_output'
 
         return no_update
-
-    # @dash_app.callback(
-    #     Output('page-content', 'children'),
-    #     Input('url', 'pathname'),
-    # )
-    # def return_dash_layout(pathname: str) -> object | str:
-    #     """
-    #     Функция возвращает страницу пользователю
-    #     :param pathname: str
-    #     :return: object | str
-    #     """
-    #     print('return_dash_layout()')
-    #     if pathname == '/dash/page_input':
-    #         return page_input
-    #     elif pathname == '/dash/page_waiting_parsing':
-    #         return dash_table_waiting_parsing
-    #     elif pathname == '/dash/page_output':
-    #         return dash_page_output
-    #     else:
-    #         return '404'
-
-    # dash_app.layout = html.Div([
-    #     dcc.Location(id='url', refresh=False),
-    #     html.Div(id='page-content'),
-    # ])
 
     page_input = html.Div(
         children=[
