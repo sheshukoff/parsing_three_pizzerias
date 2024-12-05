@@ -146,18 +146,19 @@ label:active:after {
     top: -20px;
 }
 
-/* Пагинация (таблица Промежуточный итог) */
-.previous-next-container {
-    margin-top: -120px;
-    margin-left: 1300px;
+#subtotal-input:disabled,
+subtotal-input[disabled]{
+    opacity: 0.25;
 }
 
+
+/* Кнопки на странице "Промежуточный итог" */
 #btn_xlsx {
     position: relative;
     font-family: Lobster;
     color: #fff;
     background-color: #212529;
     border-color: #212529;
-    top: 10px;
+    top: -150px;
     left: 1370px;
 }
