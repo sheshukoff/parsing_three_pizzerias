@@ -1,6 +1,7 @@
 from create_table_sql import Brand, City, Section, Product
 from create_table_sql import session
 from sqlalchemy import insert
+from datetime import datetime
 
 
 def int_price(price: str) -> int | None:
@@ -23,6 +24,16 @@ def int_price(price: str) -> int | None:
         return None
     else:
         return int(new_price)
+
+
+def get_current_date() -> str:
+    """
+    Функция возвращает текущую дату в формате (YYYY-MM-DD)
+    :return: str
+    """
+    current_date = datetime.now()
+
+    return current_date.strftime("%Y-%m-%d")
 
 
 def get_brand_id(name_brand: str) -> int | None:
@@ -137,6 +148,8 @@ def load_database_description_product_card(data_from_locality: dict[list[dict]],
     :param city_id: int
     """
 
+    date = get_current_date()
+
     for section, products_cards in data_from_locality.items():
         section_id = get_section_id(section)
         if not section_id:
@@ -161,6 +174,7 @@ def load_database_description_product_card(data_from_locality: dict[list[dict]],
                     "brand_id": brand_id,
                     "city_id": city_id,
                     "section_id": section_id,
+                    "date": date,
                 },
             ]
 
