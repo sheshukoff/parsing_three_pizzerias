@@ -103,10 +103,11 @@ def get_name_catalog(soup_page) -> list:
     :return: list
     """
     sections = soup_page.find("section", {"class": "wrap catalogs"})
-    section_pizza = sections.section.h1
+    section_pizza = sections.find('h1', {"class": "cath1 menu_picca"})
     other_section = sections.find_all("strong")
 
-    other_section.insert(0, section_pizza)
+    other_section.insert(1, section_pizza)
+    print(other_section)
 
     return other_section
 
