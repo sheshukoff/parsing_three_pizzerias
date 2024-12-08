@@ -43,8 +43,8 @@ def init_dash_table_output(dash_app) -> object:
         :return: object
         """
         print('Таблица table_output выведена')
-        create_table_output()
-        return table_output
+        result = create_table_output()
+        return result
 
     def get_query():
         get_table = ((session.query(
@@ -75,8 +75,8 @@ def init_dash_table_output(dash_app) -> object:
                 'brand': brand,
                 'city': city,
                 'section': section,
-                'product_name': product_name + '...' if product_name is not None and len(product_name) <= 25 else None,
-                'description': description + '...' if description is not None and len(description) <= 85 else None,
+                'product_name': product_name[:25] + '...' if product_name is not None and len(product_name) >= 25 else product_name,
+                'description': description[:85] + '...' if description is not None and len(description) >= 85 else description,
                 'new_price': new_price,
                 'old_price': old_price,
                 'date': date
@@ -85,9 +85,9 @@ def init_dash_table_output(dash_app) -> object:
 
     def create_div_block(table_output, columns):
         div = html.Div(
+            id='table_output',
             children=[
                 dash_table.DataTable(
-                    # id='table_output',
                     data=table_output,
                     columns=columns,
                     page_action="native",
