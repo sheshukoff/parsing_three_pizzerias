@@ -5,9 +5,6 @@ import pandas as pd
 from load_in_postgresql import get_current_date
 
 
-# from save_excel_file import save_dataframe
-
-
 def init_dash_table_output(dash_app) -> object:
     """
     Функция стоит таблицу промежуточный итог (page_output)
@@ -19,7 +16,12 @@ def init_dash_table_output(dash_app) -> object:
         Input("btn_xlsx", "n_clicks"),
         prevent_initial_call=True,
     )
-    def func(n_clicks):
+    def load_excel_file(n_clicks: int) -> object:
+        """
+        Функция отправляет файл excel в "загрузки"
+        :param n_clicks: int
+        :return: object
+        """
         get_table = get_query()
         dataframe = pd.DataFrame(get_table)
 
@@ -46,7 +48,11 @@ def init_dash_table_output(dash_app) -> object:
         result = create_table_output()
         return result
 
-    def get_query():
+    def get_query() -> list:
+        """
+        Функция возвращает запрос для вывода информации после парсинга
+        :return: list
+        """
         get_table = ((session.query(
             Brand.name.label('Бренд'),
             City.name.label('Город'),
@@ -65,7 +71,12 @@ def init_dash_table_output(dash_app) -> object:
                      )
         return get_table
 
-    def table_output_assembly(get_table):
+    def table_output_assembly(get_table) -> list[dict[str, str]]:
+        """
+        Функция возвращает подготовленные данные для таблицы "промежуточный итог"
+        :param get_table: object
+        :return: list[dict[str, str]]
+        """
         output_info = []
 
         for row in get_table:
@@ -75,15 +86,21 @@ def init_dash_table_output(dash_app) -> object:
                 'brand': brand,
                 'city': city,
                 'section': section,
-                'product_name': product_name[:25] + '...' if product_name is not None and len(product_name) >= 25 else product_name,
-                'description': description[:85] + '...' if description is not None and len(description) >= 85 else description,
+                'product_name': product_name[:25] + '...' if product_name and len(product_name) >= 25 else product_name,
+                'description': description[:85] + '...' if description and len(description) >= 85 else description,
                 'new_price': new_price,
                 'old_price': old_price,
                 'date': date
             }, )
         return output_info
 
-    def create_div_block(table_output, columns):
+    def create_div_block(table_output: list[dict[str, str]], columns: list[dict]) -> html.Div:
+        """
+        Функция возвращает html разметку страницы
+        :param table_output: list[dict[str, str]]
+        :param columns: list[dict]
+        :return: html.Div
+        """
         div = html.Div(
             id='table_output',
             children=[
@@ -124,10 +141,13 @@ def init_dash_table_output(dash_app) -> object:
                 dcc.Download(id="download-dataframe-xlsx")
             ],
         )
-
         return div
 
-    def create_table_output():
+    def create_table_output() -> html.Div:
+        """
+        Функция возвращает страницу page_output
+        :return: html.Div
+        """
         columns = [
             {'name': 'Бренд', 'id': 'brand'},
             {'name': 'Город', 'id': 'city'},
@@ -136,7 +156,7 @@ def init_dash_table_output(dash_app) -> object:
             {'name': 'Описание', 'id': 'description'},
             {'name': 'Новая цена', 'id': 'new_price'},
             {'name': 'Старая цена', 'id': 'old_price'},
-            {'name': 'Дата', 'id': 'date'}
+            {'name': 'Дата парсинга', 'id': 'date'}
         ]
 
         get_table = get_query()
