@@ -1,6 +1,6 @@
 import time
 
-from dash import html, Input, Output, dcc, State
+from dash import html, Input, Output, dcc, State, set_props
 import dash_bootstrap_components as dbc
 from components_for_dash_table import waiting_parsing
 
@@ -74,7 +74,7 @@ def init_dash_table_waiting_parsing(dash_app):
 
         return parsing
 
-    @dash_app.long_callback(
+    @dash_app.callback(
         inputs=[Input('table_for_waiting_parsing', 'children')],
         state=[State('choose_cities_session', 'data'),
                State('count_percent_session', 'data')],
@@ -83,7 +83,8 @@ def init_dash_table_waiting_parsing(dash_app):
                   Output("tashir-progress", "value"),
                   Output("tashir-progress", "label"),
                   Output("tomato-progress", "value"),
-                  Output("tomato-progress", "label")]
+                  Output("tomato-progress", "label")],
+        background=True,
     )
     def processing_waiting_parsing(update_progress, table: list, cities_for_parsing: dict, brands_values: dict):
         """
@@ -105,10 +106,10 @@ def init_dash_table_waiting_parsing(dash_app):
                 update_progress(get_tuple_values(brands_values))
 
             for city in cities:
-                # parsing = definition_parsing(brand)
-                # parsing(brand, city)
+                parsing = definition_parsing(brand)
+                parsing(brand, city)
 
-                if is_last_element(city, cities):  # можно сделать функицю "Обновление прогресс бара"
+                if is_last_element(city, cities):
                     now_percent = 100
                     print('70 row', now_percent)
                 else:
@@ -118,6 +119,8 @@ def init_dash_table_waiting_parsing(dash_app):
                 brands_values[brand] = now_percent
                 update_progress(get_tuple_values(brands_values))
             time.sleep(2)
+
+        set_props('subtotal-input', {'disabled': False})
 
     @dash_app.callback(
         Output('table_for_waiting_parsing', 'children'),
@@ -140,7 +143,7 @@ def init_dash_table_waiting_parsing(dash_app):
             dcc.Store(id='choose_cities_session', storage_type='session'),
             dcc.Store(id='count_percent_session', storage_type='session'),
             dbc.Table(id='table_for_waiting_parsing'),
-            html.Button('Промежуточный итог', id='subtotal-input'),
+            html.Button('Промежуточный итог', id='subtotal-input', disabled=True),
         ],
         className="table-pagination",
     )

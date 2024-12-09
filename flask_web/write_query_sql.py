@@ -1,4 +1,4 @@
-from create_table import Authorized_users, session, engine
+from create_table import Authorized_users, session
 from sqlalchemy import insert
 
 
@@ -47,8 +47,3 @@ def search_password(input_login: str) -> None | str:
         return None
     hash_password = user.password
     return hash_password
-
-
-connection = engine.connect()
-print("подключено")
-connection.close()

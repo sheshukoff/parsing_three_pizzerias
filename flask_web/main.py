@@ -99,7 +99,7 @@ if __name__ == "__main__":
 
 
     @login_manager.user_loader
-    def loader_user(user_id):  # TODO переместить к остальным функциям (Flask)
+    def loader_user(user_id):
         print("================ loader_user ==================")
         return session.get(Authorized_users, user_id)
 
@@ -120,7 +120,7 @@ if __name__ == "__main__":
         Output('page-content', 'children'),
         Input('url', 'pathname'),
     )
-    def return_dash_layout(pathname: str) -> object | str:  # TODO переместить к остальным функциям (DASH)
+    def return_dash_layout(pathname: str) -> object | str:
         """
         Функция возвращает страницу пользователю
         :param pathname: str
@@ -138,9 +138,6 @@ if __name__ == "__main__":
 
     page_input = init_dash_table_input(dash_app, PAGE_SIZE)
     dash_table_waiting_parsing = init_dash_table_waiting_parsing(dash_app)
-    dash_page_output = init_dash_table_output()
+    dash_page_output = init_dash_table_output(dash_app)
 
     flask_app.run()
-
-
-# ускорить загрузку в базу данных
