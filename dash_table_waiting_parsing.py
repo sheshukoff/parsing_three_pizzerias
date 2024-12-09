@@ -109,7 +109,7 @@ def init_dash_table_waiting_parsing(dash_app):
                 parsing = definition_parsing(brand)
                 parsing(brand, city)
 
-                if is_last_element(city, cities):  # можно сделать функицю "Обновление прогресс бара"
+                if is_last_element(city, cities):
                     now_percent = 100
                     print('70 row', now_percent)
                 else:
